@@ -1,19 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import {
-  Controller,
-  createControllerContext,
-  useController,
-} from "react-state-view-controller";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Controller, createControllerContext, useController } from 'react-state-view-controller'
 
-const MultiCounterContext = createControllerContext<
-  MultiCounterController,
-  MultiCounterState
->();
+const MultiCounterContext = createControllerContext<MultiCounterController, MultiCounterState>()
 
 const ButtonsComp = () => {
-  const controller = useController(MultiCounterContext);
-  console.log("re-render control center");
+  const controller = useController(MultiCounterContext)
+  console.log('re-render control center')
   return (
     <div>
       <button onClick={() => controller.increaseCounter()}>Count</button>
@@ -21,50 +14,48 @@ const ButtonsComp = () => {
       <button onClick={() => controller.increaseCounter2()}>Count3</button>
       <button onClick={() => controller.calcTotal()}>Total</button>
     </div>
-  );
-};
+  )
+}
 
 type CounterComponentProps = {
-  id: string;
-  stateSelect: (state: MultiCounterState) => number;
-};
+  id: string
+  stateSelect: (state: MultiCounterState) => number
+}
 const CounterComponent = (props: CounterComponentProps) => {
   return (
     <div>
       <MultiCounterContext.Builder
         builder={(state) => {
-          console.log("Component with id: " + props.id + " trigger re-render.");
-          return <h2>{props.stateSelect(state)}</h2>;
+          console.log('Component with id: ' + props.id + ' trigger re-render.')
+          return <h2>{props.stateSelect(state)}</h2>
         }}
         buildWhen={(prev, curr) => {
-          return props.stateSelect(prev) !== props.stateSelect(curr);
+          return props.stateSelect(prev) !== props.stateSelect(curr)
         }}
       />
     </div>
-  );
-};
+  )
+}
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
-  <React.StrictMode>
-    <MultiCounterContext.Provider create={() => new MultiCounterController()}>
-      <CounterComponent id="1" stateSelect={(state) => state.count} />
-      <CounterComponent id="2" stateSelect={(state) => state.count2} />
-      <CounterComponent id="3" stateSelect={(state) => state.count3} />
-      <CounterComponent id="total" stateSelect={(state) => state.total} />
-      <ButtonsComp />
-    </MultiCounterContext.Provider>
-  </React.StrictMode>
-);
+  // <React.StrictMode>
+  <MultiCounterContext.Provider create={() => new MultiCounterController()}>
+    <CounterComponent id='1' stateSelect={(state) => state.count} />
+    <CounterComponent id='2' stateSelect={(state) => state.count2} />
+    <CounterComponent id='3' stateSelect={(state) => state.count3} />
+    <CounterComponent id='total' stateSelect={(state) => state.total} />
+    <ButtonsComp />
+  </MultiCounterContext.Provider>,
+  // {/* </React.trictMode> */}
+)
 
 type MultiCounterState = {
-  count: number;
-  count2: number;
-  count3: number;
-  total: number;
-};
+  count: number
+  count2: number
+  count3: number
+  total: number
+}
 
 class MultiCounterController extends Controller<MultiCounterState> {
   constructor() {
@@ -73,21 +64,21 @@ class MultiCounterController extends Controller<MultiCounterState> {
       count2: 0,
       count3: 0,
       total: 0,
-    });
+    })
   }
   increaseCounter() {
-    this.emit({ ...this.state, count: this.state.count + 1 });
+    this.emit({ ...this.state, count: this.state.count + 1 })
   }
   increaseCounter1() {
-    this.emit({ ...this.state, count2: this.state.count2 + 1 });
+    this.emit({ ...this.state, count2: this.state.count2 + 1 })
   }
   increaseCounter2() {
-    this.emit({ ...this.state, count3: this.state.count3 + 1 });
+    this.emit({ ...this.state, count3: this.state.count3 + 1 })
   }
   calcTotal() {
     this.emit({
       ...this.state,
       total: this.state.count3 + this.state.count2 + this.state.count,
-    });
+    })
   }
 }
