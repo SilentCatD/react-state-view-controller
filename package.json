@@ -1,0 +1,48 @@
+{
+  "name": "react-view-controller",
+  "version": "1.0.0",
+  "description": "A clean state management library for React/React Native. Effectively separate logic and UI",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
+    "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
+    "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run prettier && npm run lint"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "state-management",
+    "view-controller",
+    "clean-architecture",
+    "react",
+    "typescript"
+  ],
+  "author": "silent_cat",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.35",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  }
+}
