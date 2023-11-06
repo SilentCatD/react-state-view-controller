@@ -10,7 +10,7 @@ const ButtonsComp = () => {
   return (
     <MultiCounterContext.Listener
       listener={() => {
-        console.log('this is not re-render trigger, just log when state change')
+        // console.log('this is not re-render trigger, just log when state change')
       }}
     >
       <button onClick={() => controller.increaseCounter()}>Count</button>
