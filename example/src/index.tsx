@@ -23,17 +23,15 @@ type CounterComponentProps = {
 }
 const CounterComponent = (props: CounterComponentProps) => {
   return (
-    <div>
-      <MultiCounterContext.Builder
-        builder={(state) => {
-          console.log('Component with id: ' + props.id + ' trigger re-render.')
-          return <h2>{props.stateSelect(state)}</h2>
-        }}
-        buildWhen={(prev, curr) => {
-          return props.stateSelect(prev) !== props.stateSelect(curr)
-        }}
-      />
-    </div>
+    <MultiCounterContext.Builder
+      builder={(state) => {
+        console.log('Component with id: ' + props.id + ' trigger re-render.')
+        return <h2>{props.stateSelect(state)}</h2>
+      }}
+      buildWhen={(prev, curr) => {
+        return props.stateSelect(prev) !== props.stateSelect(curr)
+      }}
+    />
   )
 }
 
