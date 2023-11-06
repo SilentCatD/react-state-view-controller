@@ -8,12 +8,16 @@ const ButtonsComp = () => {
   const controller = useController(MultiCounterContext)
   console.log('re-render control center')
   return (
-    <div>
+    <MultiCounterContext.Listener
+      listener={() => {
+        console.log('this is not re-render trigger, just log when state change')
+      }}
+    >
       <button onClick={() => controller.increaseCounter()}>Count</button>
       <button onClick={() => controller.increaseCounter1()}>Count2</button>
       <button onClick={() => controller.increaseCounter2()}>Count3</button>
       <button onClick={() => controller.calcTotal()}>Total</button>
-    </div>
+    </MultiCounterContext.Listener>
   )
 }
 
