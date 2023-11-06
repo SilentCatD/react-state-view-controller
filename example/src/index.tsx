@@ -1,51 +1,93 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { Controller, createControllerContext, useController } from 'react-state-view-controller'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import {
+  Controller,
+  createControllerContext,
+  useController,
+} from "react-state-view-controller";
 
-const CounterContext = createControllerContext<CounterController, number>()
+const MultiCounterContext = createControllerContext<
+  MultiCounterController,
+  MultiCounterState
+>();
 
-const TestComp = () => {
-  console.log('re-render-test')
-  return <h1>Re-Render-Test</h1>
-}
-
-const ButtonComp = () => {
-  const controller = useController(CounterContext)
-  console.log('re-render-controller')
+const ButtonsComp = () => {
+  const controller = useController(MultiCounterContext);
+  console.log("re-render control center");
   return (
     <div>
-      <CounterContext.Listener
-        listener={(state) => console.log({ state: state })}
-        listenWhen={(prev, curr) => curr === 10}
-      >
-        <button onClick={() => controller.increase()}>Increase</button>
-        <button onClick={() => controller.decrease()}>Decrease</button>
-      </CounterContext.Listener>
+      <button onClick={() => controller.increaseCounter()}>Count</button>
+      <button onClick={() => controller.increaseCounter1()}>Count2</button>
+      <button onClick={() => controller.increaseCounter2()}>Count3</button>
+      <button onClick={() => controller.calcTotal()}>Total</button>
     </div>
-  )
-}
+  );
+};
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+type CounterComponentProps = {
+  id: string;
+  stateSelect: (state: MultiCounterState) => number;
+};
+const CounterComponent = (props: CounterComponentProps) => {
+  return (
+    <div>
+      <MultiCounterContext.Builder
+        builder={(state) => {
+          console.log("Component with id: " + props.id + " trigger re-render.");
+          return <h2>{props.stateSelect(state)}</h2>;
+        }}
+        buildWhen={(prev, curr) => {
+          return props.stateSelect(prev) !== props.stateSelect(curr);
+        }}
+      />
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 root.render(
   <React.StrictMode>
-    <CounterContext.Provider create={() => new CounterController(10)}>
-      <div>
-        <TestComp />
-        <CounterContext.Builder builder={(state) => <h2>{state}</h2>} />
-        <ButtonComp />
-      </div>
-    </CounterContext.Provider>
-  </React.StrictMode>,
-)
+    <MultiCounterContext.Provider create={() => new MultiCounterController()}>
+      <CounterComponent id="1" stateSelect={(state) => state.count} />
+      <CounterComponent id="2" stateSelect={(state) => state.count2} />
+      <CounterComponent id="3" stateSelect={(state) => state.count3} />
+      <CounterComponent id="total" stateSelect={(state) => state.total} />
+      <ButtonsComp />
+    </MultiCounterContext.Provider>
+  </React.StrictMode>
+);
 
-class CounterController extends Controller<number> {
-  constructor(initialValue: number) {
-    super(initialValue)
+type MultiCounterState = {
+  count: number;
+  count2: number;
+  count3: number;
+  total: number;
+};
+
+class MultiCounterController extends Controller<MultiCounterState> {
+  constructor() {
+    super({
+      count: 0,
+      count2: 0,
+      count3: 0,
+      total: 0,
+    });
   }
-  increase() {
-    this.emit(this.state + 1)
+  increaseCounter() {
+    this.emit({ ...this.state, count: this.state.count + 1 });
   }
-  decrease() {
-    this.emit(this.state - 1)
+  increaseCounter1() {
+    this.emit({ ...this.state, count2: this.state.count2 + 1 });
+  }
+  increaseCounter2() {
+    this.emit({ ...this.state, count3: this.state.count3 + 1 });
+  }
+  calcTotal() {
+    this.emit({
+      ...this.state,
+      total: this.state.count3 + this.state.count2 + this.state.count,
+    });
   }
 }
