@@ -1,5 +1,5 @@
 {
-  "name": "react-view-controller",
+  "name": "react-state-view-controller",
   "version": "1.0.0",
   "description": "A clean state management library for React/React Native. Effectively separate logic and UI",
   "main": "./dist/cjs/index.js",
