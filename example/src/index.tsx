@@ -18,8 +18,8 @@ const ButtonComp = () => {
         listener={(state) => console.log({ state: state })}
         listenWhen={(prev, curr) => curr === 10}
       >
-        <button  onClick={() => controller.increase()}>Increase</button>
-        <button  onClick={() => controller.decrease()}>Decrease</button>
+        <button onClick={() => controller.increase()}>Increase</button>
+        <button onClick={() => controller.decrease()}>Decrease</button>
       </CounterContext.Listener>
     </div>
   )
