@@ -9,12 +9,6 @@ export type ControllerProvider<C extends Controller<S>, S> = React.FC<PropsWithC
 
 export type BuilderBuildWhen<S> = (prevState: S, currentState: S) => boolean
 
-export type BuilderAction<S> = {
-  type: 'newstate'
-  payload: S
-  buildWhen?: BuilderBuildWhen<S>
-}
-
 export interface BuilderProps<S> {
   builder: (state: S) => ReactNode
   buildWhen?: BuilderBuildWhen<S>

@@ -1,9 +1,8 @@
-import { PropsWithChildren, createContext, useEffect, useReducer, useRef } from 'react'
+import { PropsWithChildren, createContext, useEffect, useRef, useState } from 'react'
 import Controller from './Controller'
 import {
   ControllerContext,
   ControllerProvider,
-  BuilderAction,
   Builder,
   Listener,
   ControllerProviderProps,
@@ -38,34 +37,29 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
 
   controllerContext.Provider = ControllerProvider
 
-  const stateReducer = (state: S, action: BuilderAction<S>): S => {
-    switch (action.type) {
-      case 'newstate':
-        if (state === action.payload) {
-          return state
-        }
-        if (action.buildWhen) {
-          if (action.buildWhen?.(state, action.payload)) {
-            return action.payload
-          }
-          return state
-        }
-        return action.payload
-    }
-  }
-
   const Builder: Builder<S> = ({ builder, buildWhen }: BuilderProps<S>) => {
     const controller = useController(controllerContext)
-    const [state, dispatch] = useReducer(stateReducer, controller.state)
+    const [state, setState] = useState(controller.state)
+    const oldStateRef = useRef(controller.state)
     const subcriptionRef = useRef<Subscription | null>(null)
+
+    const updateState = (newState: S) => {
+      oldStateRef.current = newState
+      setState(newState)
+    }
 
     useEffect(() => {
       const subcription = controller.subject.subscribe((newState) => {
-        dispatch({
-          type: 'newstate',
-          payload: newState,
-          buildWhen: buildWhen,
-        })
+        if (oldStateRef.current === newState) {
+          return
+        }
+        if (buildWhen) {
+          if (buildWhen?.(oldStateRef.current, newState)) {
+            updateState(newState)
+          }
+        } else {
+          updateState(newState)
+        }
       })
       subcriptionRef.current = subcription
       return () => {
