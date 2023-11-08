@@ -37,10 +37,16 @@ The `State` object is something that holds data for UI rendering, and the UI use
 
 ```typescript
 abstract class Controller<T> {
-  constructor(initialState: T) // The initial state of the UI
-  public get subject() // The RxJS subject to subscribe to if necessary
-  public get state() // The current state that the controller is maintaining
-  protected emit(state: T) // Emit a new state and trigger all listeners. Note that it must be a new object, different from the old state, or the new state emission will be skipped.
+  // The initial state of the UI
+  constructor(initialState: T)
+  // The RxJS subject to subscribe to if necessary
+  public get subject()
+  // The current state that the controller is maintaining
+  public get state()
+  // Emit a new state and trigger all listeners.
+  // Note that it must be a new object, different from the old state,
+  // or the new state emission will be skipped.
+  protected emit(state: T)
   public async dispose() // Override if necessary to clean up any resources.
 }
 ```
@@ -127,7 +133,10 @@ const CounterComponent = () => {
         return <h2>{state.count}</h2>
       }}
       buildWhen={(prev, curr) => {
-        // Optional: If this function is provided and returns `false`, the re-render trigger will be skipped. We are provided with the previous state - the state that the component is using for rendering, and the new state, which will potentially be used for rendering if we return true or omit this function entirely.
+        // Optional: If this function is provided and returns `false`, the re-render trigger will be skipped.
+        // We are provided with the previous state - the state that the component is using for rendering,
+        // and the new state, which will potentially be used for rendering if we return true or omit 
+        // this function entirely.
       }}
     />
   )
