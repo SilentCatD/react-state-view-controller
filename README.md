@@ -105,7 +105,7 @@ Inside the `ButtonComponent`, or any other component, we could get the provided 
 import { useController } from 'react-state-view-controller'
 
 const ButtonComponent = () => {
-  const controller = useController(MultiCounterContext)
+  const controller = useController(CounterContext)
   return (
     <div>
       <button onClick={() => controller.increaseCounter()}>Increase</button>
