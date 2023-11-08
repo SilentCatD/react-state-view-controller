@@ -9,6 +9,8 @@ import {
   ControllerContext,
 } from './types'
 
+import { ControllerNotProvided } from './error'
+
 import { useController } from './useController'
 import { createControllerContext } from './ControllerContext'
 
@@ -23,3 +25,5 @@ export type {
   ControllerContext,
 }
 export { useController, createControllerContext }
+
+export { ControllerNotProvided }
