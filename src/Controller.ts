@@ -4,7 +4,7 @@ abstract class Controller<T> {
     this._subject = new BehaviorSubject<T>(initialState)
   }
 
-  _subject!: BehaviorSubject<T>
+  private _subject!: BehaviorSubject<T>
 
   public get observable() {
     return this._subject.asObservable()
