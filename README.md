@@ -66,7 +66,7 @@ class CounterController extends Controller<CounterState> {
 }
 ```
 
-To create a new `Controller`, you need to extend the `Controller` class, which provides methods for state mutation and notifying listeners. In the example above, the `CounterController` has `{count: 0}` as its initialState. It updates it through methods like `increaseCounter` or `decreaseCounter` using `emit(newState)`.
+To create a new `Controller`, you need to extend the `Controller` class, which provides methods for state mutation and notifying listeners. In the example above, the `CounterController` has `{count: 0}` as its `initialState`. It updates it through methods like `increaseCounter` or `decreaseCounter` using `emit(newState)`.
 
 Do note that the `newState` object must be different from the old `State`. Otherwise, the `Controller` will just skip it. This optimization avoids unnecessary state updates.
 
