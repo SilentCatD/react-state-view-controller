@@ -49,7 +49,7 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
     }
 
     useEffect(() => {
-      const subcription = controller.subject.subscribe((newState) => {
+      const subcription = controller.observable.subscribe((newState) => {
         if (oldStateRef.current === newState) {
           return
         }
@@ -87,7 +87,7 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
     }
 
     useEffect(() => {
-      const subcription = controller.subject.subscribe((newState) => {
+      const subcription = controller.observable.subscribe((newState) => {
         const state = stateRef.current
         if (listenWhen) {
           if (listenWhen?.(state, newState)) {

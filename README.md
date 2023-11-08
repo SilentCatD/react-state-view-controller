@@ -39,8 +39,8 @@ The `State` object is something that holds data for UI rendering, and the UI use
 abstract class Controller<T> {
   // The initial state of the UI
   constructor(initialState: T)
-  // The RxJS subject to subscribe to if necessary
-  public get subject()
+  // The observable to subscribe to if necessary
+  public get observable()
   // The current state that the controller is maintaining
   public get state()
   // Emit a new state and trigger all listeners.
@@ -135,7 +135,7 @@ const CounterComponent = () => {
       buildWhen={(prev, curr) => {
         // Optional: If this function is provided and returns `false`, the re-render trigger will be skipped.
         // We are provided with the previous state - the state that the component is using for rendering,
-        // and the new state, which will potentially be used for rendering if we return true or omit 
+        // and the new state, which will potentially be used for rendering if we return true or omit
         // this function entirely.
       }}
     />
