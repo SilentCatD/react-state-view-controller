@@ -10,7 +10,8 @@ If you don't need to hear my yapping, head to the `Usage` section.
 A good state management system, in my opinion, is a system that effectively conform to the following criteria:
 
 1. Effectively separate between logic and UI
-   These things shouldn't be couple together on the UI with high complexity, for a single or simple component, it should be fine. But were the components is complex, or a screen, or a feature (many screens), the controlling logic should be separated. This would prove to be beneficial:
+
+These things shouldn't be couple together on the UI with high complexity, for a single or simple component, it should be fine. But were the components is complex, or a screen, or a feature (many screens), the controlling logic should be separated. This would prove to be beneficial:
 
 - Easier DI: we could create a network of `Controllers` dependent on each other if necessary, with coupling relationship clearly defined, conform to the Component Principle
 - State lifecycle: a `State`/`Model` that manage a `View` should conform to the `View`'s lifecycle. When the screen is mounted, the `State` is then born and mutated throughout the `View` lifecycle, trigger the re-rendering of UI layer when it is mutated, and when the `View` is unmounted, the managing `Controller` should be dispose by then, cleaning up any necessary recourses.
@@ -18,8 +19,9 @@ A good state management system, in my opinion, is a system that effectively conf
 - Reusable: One of the beneficial things may also be the easily reusable of logic between different `Controllers
 
 2. DI
-   A good state management system should provide mechanism for effective dependency injection. The `Controller` should be easily reachable for any of the children in it's scope, for the children that is currently managed by it.
-   `Context` API is a good example of this mechanism as we can reach for any data without having passing prop down to every children components
+
+A good state management system should provide mechanism for effective dependency injection. The `Controller` should be easily reachable for any of the children in it's scope, for the children that is currently managed by it.
+`Context` API is a good example of this mechanism as we can reach for any data without having passing prop down to every children components
 
 3. Scoped re-render-trigger and re-render-filter
 
