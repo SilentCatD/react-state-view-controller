@@ -1,6 +1,6 @@
 {
   "name": "react-state-view-controller",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A clean state management library for React/React Native. Effectively separate logic and UI",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SilentCatD/react-view-controller.git"
+    "url": "git+https://github.com/SilentCatD/react-state-view-controller.git"
   },
   "files": [
     "dist",
@@ -28,7 +28,11 @@
     "view-controller",
     "clean-architecture",
     "react",
-    "typescript"
+    "typescript",
+    "mvc",
+    "bloc",
+    "model-view-controller",
+    "state"
   ],
   "author": "silent_cat",
   "license": "MIT",
