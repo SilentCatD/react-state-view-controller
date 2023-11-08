@@ -6,8 +6,8 @@ abstract class Controller<T> {
 
   _subject!: BehaviorSubject<T>
 
-  public get subject() {
-    return this._subject
+  public get observable() {
+    return this._subject.asObservable()
   }
 
   public get state() {
@@ -21,7 +21,9 @@ abstract class Controller<T> {
     this._subject.next(state)
   }
 
-  public async dispose() {}
+  public async dispose() {
+    this._subject.complete()
+  }
 }
 
 export default Controller
