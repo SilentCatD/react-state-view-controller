@@ -221,7 +221,7 @@ const controller = useListener(
 )
 ```
 
-Note that this hook is not intended by default to cause re-render, it's just simply trigger callback
+Note that this hook is not intended by default to cause re-render, it just simply triggers callback
 
 ## Conclusion
 
