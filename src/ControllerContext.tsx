@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useEffect, useRef, useState } from 'react'
+import { PropsWithChildren, createContext, useEffect, useRef } from 'react'
 import Controller from './Controller'
 import {
   ControllerContext,
@@ -9,7 +9,8 @@ import {
   BuilderProps,
   ListenerProps,
 } from './types'
-import { Subscription } from 'rxjs'
+import { useBuilder } from './useBuilder'
+import { useListener } from './useListener'
 import { useController } from './useController'
 
 function createControllerContext<C extends Controller<S>, S>(): ControllerContext<C, S> {
@@ -37,74 +38,19 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
 
   controllerContext.Provider = ControllerProvider
 
-  const Builder: Builder<S> = ({ builder, buildWhen }: BuilderProps<S>) => {
-    const controller = useController(controllerContext)
-    const [state, setState] = useState(controller.state)
-    const oldStateRef = useRef(controller.state)
-    const subcriptionRef = useRef<Subscription | null>(null)
-
-    const updateState = (newState: S) => {
-      oldStateRef.current = newState
-      setState(newState)
-    }
-
-    useEffect(() => {
-      const subcription = controller.observable.subscribe((newState) => {
-        if (oldStateRef.current === newState) {
-          return
-        }
-        if (buildWhen) {
-          if (buildWhen?.(oldStateRef.current, newState)) {
-            updateState(newState)
-          }
-        } else {
-          updateState(newState)
-        }
-      })
-      subcriptionRef.current = subcription
-      return () => {
-        subcriptionRef.current?.unsubscribe()
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [buildWhen])
-
+  const Builder: Builder<C, S> = ({ builder, buildWhen }: BuilderProps<C, S>) => {
+    const [state, controller] = useBuilder(controllerContext, buildWhen)
     const renderComponent = () => {
-      return builder(state)
+      return builder(state, controller)
     }
-
     return renderComponent()
   }
 
   controllerContext.Builder = Builder
 
-  const Listener: Listener<S> = ({ listener, listenWhen, children }: PropsWithChildren<ListenerProps<S>>) => {
+  const Listener: Listener<C, S> = ({ listener, listenWhen, children }: PropsWithChildren<ListenerProps<C, S>>) => {
     const controller = useController(controllerContext)
-    const subcriptionRef = useRef<Subscription | null>(null)
-    const stateRef = useRef(controller.state)
-
-    const emitState = (newState: S) => {
-      listener(newState)
-    }
-
-    useEffect(() => {
-      const subcription = controller.observable.subscribe((newState) => {
-        const state = stateRef.current
-        if (listenWhen) {
-          if (listenWhen?.(state, newState)) {
-            emitState(newState)
-          }
-        } else {
-          emitState(newState)
-        }
-        stateRef.current = newState
-      })
-      subcriptionRef.current = subcription
-      return () => {
-        subcriptionRef.current?.unsubscribe()
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [listenWhen, listener])
-
+    useListener(controllerContext, (state) => listener(state, controller), listenWhen)
     return <>{children}</>
   }
 
