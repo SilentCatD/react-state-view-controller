@@ -12,6 +12,9 @@ import {
 import { ControllerNotProvided } from './error'
 
 import { useController } from './useController'
+import { useSelector } from './useSelector'
+import { useBuilder } from './useBuilder'
+import { useListener } from './useListener'
 import { createControllerContext } from './ControllerContext'
 
 export { Controller }
@@ -24,6 +27,6 @@ export type {
   Listener,
   ControllerContext,
 }
-export { useController, createControllerContext }
+export { useController, createControllerContext, useBuilder, useSelector, useListener }
 
 export { ControllerNotProvided }
