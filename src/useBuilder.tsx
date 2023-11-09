@@ -6,10 +6,10 @@ import { useListener } from './useListener'
 
 function useBuilder<C extends Controller<S>, S>(
   context: ControllerContext<C, S>,
-  buildWhen?: BuilderBuildWhen<S>,
+  buildWhen: BuilderBuildWhen<S> = () => true,
 ): [S, C] {
-  const controller = useController(context)
-  const [state, setState] = useState(controller.state)
+  const controller = useController(context) as C
+  const [state, setState] = useState(() => controller.state)
   useListener(
     context,
     (newState) => setState(newState),
