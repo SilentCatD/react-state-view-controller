@@ -8,12 +8,10 @@ function useListener<C extends Controller<S>, S>(
   listener: (state: S) => void,
   listenWhen?: ListenerListenWhen<S>,
 ): C {
-  const controller = useController(context)
-  const stateRef = useRef(controller.state)
+  const controller = useController<C, S>(context)
+  const stateRef = useRef<S>(controller.state)
 
-  const emitState = (newState: S) => {
-    listener(newState)
-  }
+  const emitState = (newState: S) => listener(newState)
 
   useEffect(() => {
     const subcription = controller.observable.subscribe((newState) => {
@@ -22,7 +20,7 @@ function useListener<C extends Controller<S>, S>(
         return
       }
       if (listenWhen) {
-        if (listenWhen?.(state, newState)) {
+        if (listenWhen(state, newState)) {
           emitState(newState)
         }
       } else {
