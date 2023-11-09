@@ -4,6 +4,8 @@
 
 Alternatively, Model-View-Controller (MVC), if you prefer. If you don't want to hear the introduction, head directly to the `Usage` section.
 
+[Example](https://github.com/SilentCatD/react-state-view-controller/tree/main/example)
+
 ## Overview
 
 In my opinion, a robust state management system should effectively adhere to the following criteria:
@@ -35,6 +37,8 @@ This library is created to address the concerns mentioned above.
 
 The `State` object is something that holds data for UI rendering, and the UI uses `State` for its rendering process.
 
+Take a look at some available function in the base `Controller` class. We won't have to re-write any of this, unless we want to.
+
 ```typescript
 abstract class Controller<T> {
   // The initial state of the UI
@@ -54,6 +58,8 @@ abstract class Controller<T> {
 A `Controller` will directly interact with the `State` object to mutate it, indirectly causing UI re-rendering.
 
 ```ts
+import { Controller } from 'react-state-view-controller'
+
 type CounterState = {
   count: number
 }
@@ -75,6 +81,20 @@ class CounterController extends Controller<CounterState> {
 To create a new `Controller`, you need to extend the `Controller` class, which provides methods for state mutation and notifying listeners. In the example above, the `CounterController` has `{count: 0}` as its `initialState`. It updates it through methods like `increaseCounter` or `decreaseCounter` using `emit(newState)`.
 
 Do note that the `newState` object must be different from the old `State`. Otherwise, the `Controller` will just skip it. This optimization avoids unnecessary state updates.
+
+One of many common patterns is to handle all of the necessary logic to fetch data from an API in the `Controller`, then emit the data from within the `Controller`. For example:
+
+```ts
+async fetchCounter() {
+  this.emit({ ...this.state, loading: true });
+  const newCounter = await fetchDataFromSource();
+  this.emit({ ...this.state, loading: false, count: newCounter });
+}
+```
+
+As you can see, we don't need to worry about UI-related code here. It is the UI's responsibility to subscribe to changes in the `State` object and render accordingly.
+
+In the UI, we can then check for the `loading` property of the `State` object and render a `LoadingScreen` if necessary.
 
 ### Provider and Dependency Injection (DI)
 
@@ -121,6 +141,8 @@ const ButtonComponent = () => {
 
 You can interact with the provided `Controller` as needed. Please note that this will get the nearest provided `Controller`, and if it can't find one (e.g., if the `Controller` is not provided to this scope), an error will be thrown.
 
+This hook should not cause re-render when new `State` is emitted.
+
 ### Builder
 
 To target and filter the re-render process when new State is emitted from `Controller` in the same scope, you can use the `Builder` component.
@@ -148,6 +170,8 @@ There are hooks for this as well, in case you don't need to scope the re-render,
 render a whole component
 
 ```ts
+import { useBuilder } from 'react-state-view-controller'
+
 // buildWhen is also provided
 const [state, controller] = useBuilder(CounterContext, (prev, curr) => true)
 ```
@@ -155,13 +179,15 @@ const [state, controller] = useBuilder(CounterContext, (prev, curr) => true)
 Usually, we don't need to watch for changes in the whole `State`, but rather just a portion of it
 
 ```ts
+import { useSelector } from 'react-state-view-controller'
+
 // only trigger re-render when `state.count5` changed
 const [value, controller] = useSelector(CounterContext, (state) => state.count5)
 ```
 
 ### Listener
 
-For triggering actions on the UI without causing a rebuild, you can use this Component:
+For triggering actions on the UI without causing a re-render, you can use this Component:
 
 ```tsx
 const CounterListenerComponent = () => {
@@ -186,12 +212,16 @@ You will be provided with the `listener` callback to be called when the State ch
 The hook for it:
 
 ```tsx
+import { useListener } from 'react-state-view-controller'
+
 const controller = useListener(
   CounterContext,
   (state) => console.log(state), // callback when state changed
   (prev, curr) => true, // callback filter
 )
 ```
+
+Note that this hook is not intended by default to cause re-render, it's just simple trigger callback
 
 ## Conclusion
 
