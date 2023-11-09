@@ -6,7 +6,8 @@ function useSelector<C extends Controller<S>, S, T>(
   context: ControllerContext<C, S>,
   stateSelector: (state: S) => T,
 ): [T, C] {
-  const [state, controller] = useBuilder(context, (prev, curr) => stateSelector(prev) !== stateSelector(curr))
+  const buildWhen = (prev: S, curr: S) => stateSelector(prev) !== stateSelector(curr)
+  const [state, controller] = useBuilder<C, S>(context, buildWhen)
   return [stateSelector(state), controller]
 }
 
