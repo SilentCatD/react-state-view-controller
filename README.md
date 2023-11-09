@@ -167,7 +167,7 @@ For triggering actions on the UI without causing a rebuild, you can use this Com
 const CounterListenerComponent = () => {
   return (
     <CounterContext.Listener
-      // controller is also provided here: (state, controller) => ReactNode
+      // controller is also provided here: (state, controller) => void
       listener={(state) => {
         // This is not a re-render trigger, just a log when the state changes.
       }}
