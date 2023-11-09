@@ -1,23 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { Controller, createControllerContext, useController } from 'react-state-view-controller'
+import { Controller, createControllerContext, useListener, useSelector } from 'react-state-view-controller'
 
 const MultiCounterContext = createControllerContext<MultiCounterController, MultiCounterState>()
 
 const ButtonsComp = () => {
-  const controller = useController(MultiCounterContext)
+  const controller = useListener(
+    MultiCounterContext,
+    () => console.log(`log but not re-render`),
+    (_prev, curr) => curr.count < 5,
+  )
   console.log('re-render control center')
   return (
-    <MultiCounterContext.Listener
-      listener={() => {
-        // console.log('this is not re-render trigger, just log when state change')
-      }}
-    >
+    <div>
       <button onClick={() => controller.increaseCounter()}>Count</button>
       <button onClick={() => controller.increaseCounter1()}>Count2</button>
       <button onClick={() => controller.increaseCounter2()}>Count3</button>
       <button onClick={() => controller.calcTotal()}>Total</button>
-    </MultiCounterContext.Listener>
+    </div>
   )
 }
 
@@ -26,17 +26,9 @@ type CounterComponentProps = {
   stateSelect: (state: MultiCounterState) => number
 }
 const CounterComponent = (props: CounterComponentProps) => {
-  return (
-    <MultiCounterContext.Builder
-      builder={(state) => {
-        console.log('Component with id: ' + props.id + ' trigger re-render.')
-        return <h2>{props.stateSelect(state)}</h2>
-      }}
-      buildWhen={(prev, curr) => {
-        return props.stateSelect(prev) !== props.stateSelect(curr)
-      }}
-    />
-  )
+  const [value] = useSelector(MultiCounterContext, props.stateSelect)
+  console.log(`comp with id ${props.id} re-render`)
+  return <h2>{value}</h2>
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
