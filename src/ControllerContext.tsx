@@ -16,9 +16,9 @@ import { useController } from './useController'
 function createControllerContext<C extends Controller<S>, S>(): ControllerContext<C, S> {
   const reactContext = createContext<C>(undefined as any)
   const controllerContext: ControllerContext<C, S> = {
-    Provider: null as any,
-    Builder: null as any,
-    Listener: null as any,
+    Provider: () => <></>,
+    Builder: () => <></>,
+    Listener: () => <></>,
     _context: reactContext,
   }
 
@@ -27,12 +27,12 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
     children,
   }: PropsWithChildren<ControllerProviderProps<C, S>>) => {
     const controllerRef = useRef(create())
-    useEffect(
-      () => () => {
-        controllerRef.current.dispose()
-      },
-      [],
-    )
+    useEffect(() => {
+      const controller = controllerRef.current
+      return () => {
+        controller.dispose()
+      }
+    }, [])
     return <reactContext.Provider value={controllerRef.current}>{children}</reactContext.Provider>
   }
 
@@ -40,10 +40,7 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
 
   const Builder: Builder<C, S> = ({ builder, buildWhen }: BuilderProps<C, S>) => {
     const [state, controller] = useBuilder(controllerContext, buildWhen)
-    const renderComponent = () => {
-      return builder(state, controller)
-    }
-    return renderComponent()
+    return builder(state, controller)
   }
 
   controllerContext.Builder = Builder
