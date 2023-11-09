@@ -25,7 +25,7 @@ In my opinion, a robust state management system should effectively adhere to the
 
    Regardless of how effectively the framework optimizes this process (e.g., comparing props in `React`), the trigger for the rebuild process should be optimized. It's better if we have more control over where and when this process occurs, even though it's just a trigger for UI re-rendering.
 
-   We should be able to specify where re-rendering may occur and set conditions for it. For example, we might have a component that only re-renders when the `a` property of the State object is greater than `5`.
+   We should be able to specify where re-rendering may occur and set conditions for it. For example, we might have a component that only re-renders when the `a` property of the `State` object is greater than `5`.
 
 ## Usage
 
