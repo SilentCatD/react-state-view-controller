@@ -18,6 +18,9 @@ function useListener<C extends Controller<S>, S>(
   useEffect(() => {
     const subcription = controller.observable.subscribe((newState) => {
       const state = stateRef.current
+      if (state === newState) {
+        return
+      }
       if (listenWhen) {
         if (listenWhen?.(state, newState)) {
           emitState(newState)
