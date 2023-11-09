@@ -15,7 +15,7 @@ In my opinion, a robust state management system should effectively adhere to the
    These two aspects should not be tightly coupled. While it may be acceptable for a single or simple component, when dealing with complex components, screens, or features (comprising multiple screens), the controlling logic should be separated. This separation brings several benefits:
 
    - Easier Dependency Injection (DI): We can create a network of interdependent `Controller` with clearly defined coupling relationships, adhering to the Component Principle.
-   - State Lifecycle: A `State`/`Model` managing a `View` should align with the `View`'s lifecycle. When the screen is mounted, the `State` and `Controller` managed it is created and evolves throughout the `View` lifecycle, triggering UI layer re-rendering when it changes. When the `View` is unmounted, the managing `Controller` should be disposed of, cleaning up any necessary resources.
+   - State Lifecycle: A `State`/`Model` managing a `View` should align with the `View`'s lifecycle. When the screen is mounted, the `State` and `Controller` managed it is created and evolves throughout the `View` lifecycle, triggering UI layer re-rendering when it changes. When the `View` is unmounted, the managing `Controller` and `State` should be disposed of, cleaning up any necessary resources.
    - Abstraction: It hides the complexity of logic, allowing the UI to trigger a logic flow by simply calling a function in the `Controller`, which may involve complex interactions, operations through APIs, or interactions with other Controllers, and emit `State` as necessary.
    - Reusability: One of the advantages is the ease of reusing logic between different `Controllers`.
 
