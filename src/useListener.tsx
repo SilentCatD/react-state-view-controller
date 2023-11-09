@@ -8,7 +8,7 @@ function useListener<C extends Controller<S>, S>(
   listener: (state: S) => void,
   listenWhen?: ListenerListenWhen<S>,
 ): C {
-  const controller = useController<C, S>(context)
+  const controller = useController<C, S>(context) as C
   const stateRef = useRef<S>(controller.state)
 
   const emitState = (newState: S) => listener(newState)
