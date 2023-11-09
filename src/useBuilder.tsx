@@ -13,7 +13,7 @@ function useBuilder<C extends Controller<S>, S>(
   useListener(
     context,
     (newState) => setState(newState),
-    (prev, curr) => buildWhen?.(prev, curr) ?? true,
+    (prev, curr) => buildWhen(prev, curr),
   )
   return [state, controller]
 }
