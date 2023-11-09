@@ -129,6 +129,7 @@ To target and filter the re-render process when new State is emitted from `Contr
 const CounterComponent = () => {
   return (
     <CounterContext.Builder
+      // you can also get the controller here : (state, controller) => ReactNode
       builder={(state) => {
         return <h2>{state.count}</h2>
       }}
@@ -143,6 +144,21 @@ const CounterComponent = () => {
 }
 ```
 
+There are hooks for this as well, in case you don't need to scope the re-render, but rather need to
+render a whole component
+
+```ts
+// buildWhen is also provided
+const [state, controller] = useBuilder(CounterContext, (prev, curr) => true)
+```
+
+Usually, we don't need to watch for changes in the whole `State`, but rather just a portion of it
+
+```ts
+// only trigger re-render when `state.count5` changed
+const [value, controller] = useSelector(CounterContext, (state) => state.count5)
+```
+
 ### Listener
 
 For triggering actions on the UI without causing a rebuild, you can use this Component:
@@ -151,6 +167,7 @@ For triggering actions on the UI without causing a rebuild, you can use this Com
 const CounterListenerComponent = () => {
   return (
     <CounterContext.Listener
+      // controller is also provided here: (state, controller) => ReactNode
       listener={(state) => {
         // This is not a re-render trigger, just a log when the state changes.
       }}
@@ -165,6 +182,16 @@ const CounterListenerComponent = () => {
 ```
 
 You will be provided with the `listener` callback to be called when the State changes. There is also `listenWhen`, similar to `Builder.buildWhen`, to filter changes in `State` to listen to as needed.
+
+The hook for it:
+
+```tsx
+const controller = useListener(
+  CounterContext,
+  (state) => console.log(state), // callback when state changed
+  (prev, curr) => true, // callback filter
+)
+```
 
 ## Conclusion
 
