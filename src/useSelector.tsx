@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import Controller from './Controller'
 import { ControllerContext } from './types'
-import { useController } from './useController'
 import { useBuilder } from './useBuilder'
 
 function useSelector<C extends Controller<S>, S, T>(

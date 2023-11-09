@@ -9,25 +9,25 @@ export type ControllerProvider<C extends Controller<S>, S> = React.FC<PropsWithC
 
 export type BuilderBuildWhen<S> = (prevState: S, currentState: S) => boolean
 
-export interface BuilderProps<S> {
-  builder: (state: S) => ReactNode
+export interface BuilderProps<C extends Controller<S>, S> {
+  builder: (state: S, controller: C) => ReactNode
   buildWhen?: BuilderBuildWhen<S>
 }
 
-export type Builder<S> = React.FC<BuilderProps<S>>
+export type Builder<C extends Controller<S>, S> = React.FC<BuilderProps<C, S>>
 
 export type ListenerListenWhen<S> = (prevState: S, currentState: S) => boolean
 
-export interface ListenerProps<S> {
-  listener: (state: S) => void
+export interface ListenerProps<C extends Controller<S>, S> {
+  listener: (state: S, controller: C) => void
   listenWhen?: ListenerListenWhen<S>
 }
 
-export type Listener<S> = React.FC<PropsWithChildren<ListenerProps<S>>>
+export type Listener<C extends Controller<S>, S> = React.FC<PropsWithChildren<ListenerProps<C, S>>>
 
 export interface ControllerContext<C extends Controller<S>, S> {
   Provider: ControllerProvider<C, S>
-  Builder: Builder<S>
-  Listener: Listener<S>
+  Builder: Builder<C, S>
+  Listener: Listener<C, S>
   _context: React.Context<C>
 }
