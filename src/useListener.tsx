@@ -6,12 +6,12 @@ import { useController } from './useController'
 function useListener<C extends Controller<S>, S>(
   context: ControllerContext<C, S>,
   listener: (state: S) => void,
-  listenWhen?: ListenerListenWhen<S>,
+  listenWhen: ListenerListenWhen<S> = () => true,
 ): C {
   const controller = useController<C, S>(context) as C
   const stateRef = useRef<S>(controller.state)
 
-  const emitState = (newState: S) => listener(newState)
+  const callback = (newState: S) => listener(newState)
 
   useEffect(() => {
     const subcription = controller.observable.subscribe((newState) => {
@@ -19,12 +19,8 @@ function useListener<C extends Controller<S>, S>(
       if (state === newState) {
         return
       }
-      if (listenWhen) {
-        if (listenWhen(state, newState)) {
-          emitState(newState)
-        }
-      } else {
-        emitState(newState)
+      if (listenWhen(state, newState) === true) {
+        callback(newState)
       }
       stateRef.current = newState
     })
