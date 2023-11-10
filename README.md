@@ -143,6 +143,71 @@ You can interact with the provided `Controller` as needed. Please note that this
 
 This hook should not cause re-render when new `State` is emitted.
 
+#### Context hell
+
+Now, we can observe that a wrapper like this indents the file slightly. However, when multiple `Provider` components are present, the file may appear disorganized.
+
+For instance, you might encounter a structure like this:
+
+```tsx
+<CounterContext.Provider create={() => new CounterController()}>
+  <CounterContext2.Provider create={() => new CounterController2()}>
+    <CounterContext3.Provider create={() => new CounterController3()}>
+      <CounterContext4.Provider create={() => new CounterController4()}>
+        <App />
+      </CounterContext4.Provider>,
+    </CounterContext3.Provider>,
+  </CounterContext2.Provider>,
+</CounterContext.Provider>,
+```
+
+In such cases, the Nested component can be utilized to reduce indentation:
+
+```tsx
+import { Nested } from 'react-state-view-controller';
+
+<Nested
+  elements={[
+    <CounterContext.Provider create={() => new CounterController()} />,
+    <CounterContext2.Provider create={() => new CounterController2()} />,
+    <CounterContext3.Provider create={() => new CounterController3()} />,
+    <CounterContext4.Provider create={() => new CounterController4()} />,
+  ]}
+>
+  <App />
+</Nested>,
+
+```
+
+Both representations are equivalent. The nested component encompasses the others, granting access to the above `Context` and `Controller` if needed.
+
+In situations where a single `Provider` requires access to the above `Controller` to depend on it, consider separating it into a distinct component:
+
+```tsx
+import { useController } from 'react-state-view-controller'
+
+const Counter2Provider = ({ children }) => {
+  const controller = useController(CounterContext)
+  return <CounterContext2.Provider create={() => new CounterController2()}>{children}</CounterContext2.Provider>
+}
+```
+
+This component can then be used as follows:
+
+```tsx
+<Nested
+  elements={[
+    <CounterContext.Provider create={() => new CounterController()} />,
+    <Counter2Provider />,
+    <CounterContext3.Provider create={() => new CounterController3()} />,
+    <CounterContext4.Provider create={() => new CounterController4()} />,
+  ]}
+>
+  <App />
+</Nested>,
+
+```
+
 ### Builder
 
 To target and filter the re-render process when new State is emitted from `Controller` in the same scope, you can use the `Builder` component.
