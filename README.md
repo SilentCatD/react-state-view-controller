@@ -161,7 +161,7 @@ For instance, you might encounter a structure like this:
 </CounterContext.Provider>,
 ```
 
-In such cases, the Nested component can be utilized to reduce indentation:
+In such cases, the `Nested` component can be utilized to reduce indentation:
 
 ```tsx
 import { Nested } from 'react-state-view-controller';
@@ -187,7 +187,9 @@ In situations where a single `Provider` requires access to the above `Controller
 import { useController } from 'react-state-view-controller'
 
 const Counter2Provider = ({ children }) => {
+  // We can get the CounterController here because it's Provider is above this component.
   const controller = useController(CounterContext)
+
   return <CounterContext2.Provider create={() => new CounterController2()}>{children}</CounterContext2.Provider>
 }
 ```
@@ -205,7 +207,6 @@ This component can then be used as follows:
 >
   <App />
 </Nested>,
-
 ```
 
 ### Builder
