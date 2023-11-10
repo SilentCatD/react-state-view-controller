@@ -1,45 +1,12 @@
-import React, {
-  CElement,
-  DOMElement,
-  DetailedReactHTMLElement,
-  FunctionComponentElement,
-  PropsWithChildren,
-  ReactElement,
-  ReactHTMLElement,
-  ReactNode,
-  ReactSVGElement,
-} from 'react'
+import React, { PropsWithChildren } from 'react'
 import ReactDOM from 'react-dom/client'
-import { Controller, createControllerContext, useController } from 'react-state-view-controller'
-import { Subscription } from 'rxjs'
+import { Controller, createControllerContext, useController, Subscription, Nested } from 'react-state-view-controller'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 const CounterContext = createControllerContext<CounterController, CounterState>()
 const CounterContext2 = createControllerContext<CounterController2, CounterState>()
 const CounterContext3 = createControllerContext<CounterController3, CounterState>()
-
-type ReceivableElement =
-  | DetailedReactHTMLElement<any, any>
-  | ReactHTMLElement<any>
-  | ReactSVGElement
-  | DOMElement<any, any>
-  | FunctionComponentElement<any>
-  | CElement<any, any>
-  | ReactElement<any>
-type NestedProps = {
-  elements: ReceivableElement[]
-}
-const Nested: React.FC<PropsWithChildren<NestedProps>> = ({ elements, children }) => {
-  const renderNested = (nestedElements: ReceivableElement[], nestedChildren?: ReactNode) => {
-    const [currentElement, ...remainingElement] = nestedElements
-    if (currentElement) {
-      return React.cloneElement(currentElement, undefined, renderNested(remainingElement, nestedChildren))
-    }
-    return children
-  }
-  return renderNested(elements, children)
-}
 
 const Counters = () => {
   return (
