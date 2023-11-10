@@ -8,6 +8,7 @@ import {
   ControllerProviderProps,
   BuilderProps,
   ListenerProps,
+  LinkedController,
 } from './types'
 import { useBuilder } from './useBuilder'
 import { useListener } from './useListener'
@@ -56,4 +57,8 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
   return controllerContext
 }
 
-export { createControllerContext }
+function createLinkedControllerContext<C, S>(): ControllerContext<LinkedController<C, S>, S> {
+  return createControllerContext<LinkedController<C, S>, S>()
+}
+
+export { createControllerContext, createLinkedControllerContext }
