@@ -7,6 +7,10 @@ import {
   ListenerProps,
   Listener,
   ControllerContext,
+  LinkedController,
+  StateEmitter,
+  StateGetter,
+  ControllerCreator,
 } from './types'
 
 import { ControllerNotProvided } from './error'
@@ -15,9 +19,10 @@ import { useController } from './useController'
 import { useSelector } from './useSelector'
 import { useBuilder } from './useBuilder'
 import { useListener } from './useListener'
-import { createControllerContext } from './ControllerContext'
+import { createControllerContext, createLinkedControllerContext } from './ControllerContext'
 import { Subscription } from 'rxjs'
 import Nested, { NestedProps, ReceivableElement } from './Nested'
+import { createController } from './createController'
 
 export { Controller }
 export { Nested }
@@ -32,8 +37,20 @@ export type {
   Subscription,
   ReceivableElement,
   NestedProps,
+  LinkedController,
+  StateEmitter,
+  StateGetter,
+  ControllerCreator,
 }
 
-export { useController, createControllerContext, useBuilder, useSelector, useListener }
+export {
+  useController,
+  createControllerContext,
+  createLinkedControllerContext,
+  useBuilder,
+  useSelector,
+  useListener,
+  createController,
+}
 
 export { ControllerNotProvided }

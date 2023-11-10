@@ -31,3 +31,10 @@ export interface ControllerContext<C extends Controller<S>, S> {
   Listener: Listener<C, S>
   _context: React.Context<C>
 }
+
+export type LinkedController<C, S> = C & Controller<S>
+
+export type StateEmitter<S> = (state: S) => void
+export type StateGetter<S> = () => S
+
+export type ControllerCreator<C, S> = (emit: StateEmitter<S>, state: StateGetter<S>) => C
