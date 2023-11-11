@@ -19,21 +19,21 @@ interface MultiCounterController {
 const createMultiCounterController = () => {
   return createController<MultiCounterController, MultiCounterState>(
     { count: 0, count2: 0, count3: 0, total: 0 },
-    (emit, state) => ({
+    (get, set) => ({
       interact: 0,
       increaseCounter() {
-        emit({ ...state(), count: state().count + 1 })
+        set({ ...get(), count: get().count + 1 })
       },
       increaseCounter1() {
-        emit({ ...state(), count2: state().count2 + 1 })
+        set({ ...get(), count2: get().count2 + 1 })
       },
       increaseCounter2() {
-        emit({ ...state(), count3: state().count3 + 1 })
+        set({ ...get(), count3: get().count3 + 1 })
       },
       calcTotal() {
-        emit({
-          ...state(),
-          total: state().count3 + state().count2 + state().count,
+        set({
+          ...get(),
+          total: get().count3 + get().count2 + get().count,
         })
       },
     }),
