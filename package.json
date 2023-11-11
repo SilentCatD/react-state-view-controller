@@ -24,6 +24,7 @@
     "README.md"
   ],
   "keywords": [
+    "react-view-controller",
     "state-management",
     "view-controller",
     "clean-architecture",
