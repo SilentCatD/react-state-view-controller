@@ -9,7 +9,6 @@ type MultiCounterState = {
   total: number
 }
 interface MultiCounterController {
-  interact: number
   increaseCounter: () => void
   increaseCounter1: () => void
   increaseCounter2: () => void
@@ -20,7 +19,6 @@ const createMultiCounterController = () => {
   return createController<MultiCounterController, MultiCounterState>(
     { count: 0, count2: 0, count3: 0, total: 0 },
     (get, set) => ({
-      interact: 0,
       increaseCounter() {
         set({ ...get(), count: get().count + 1 })
       },
