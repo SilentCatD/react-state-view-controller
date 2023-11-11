@@ -209,6 +209,58 @@ This component can then be used as follows:
 </Nested>,
 ```
 
+### Functionally Define a Controller
+
+When defining a `Controller` in a subclass manner, several advantages can be gained:
+
+- `Inter-Controller Subscription`: `Controller` can subscribe to and depend on each other, allowing for the internal triggering of state emissions.
+
+- `Inheritance and Extensibility`: By making use of inheritance, a `Controller` can be further extended, leading to more reusable code.
+
+- `Property Manipulation`: Creating, accessing, and modifying properties within a Controller becomes straightforward.
+
+However, if such complexities are unnecessary for a particular use case, a `Controller` can also be defined in a more concise manner:
+
+```ts
+import { createController } from 'react-state-view-controller'
+
+type CounterState = {
+  count: number
+}
+interface CounterController {
+  increaseCounter: () => void
+  decreaseCounter: () => void
+}
+
+const createCounterController = (initialState: CounterState) => {
+  return createController<CounterController, CounterState>(initialState, (get, set) => ({
+    increaseCounter() {
+      set({ count: get().count + 1 })
+    },
+    decreaseCounter() {
+      set({ count: get().count - 1 })
+    },
+  }))
+}
+```
+
+The corresponding `Context` creation is adjusted to link the interface type with the type of state it manages:
+
+```ts
+import { createLinkedControllerContext } from 'react-state-view-controller'
+
+// not createControllerContext, because we need to link the interface with type of State
+const CounterContext = createLinkedControllerContext<CounterController, CounterState>()
+```
+
+Finally, the CounterContext is provided to a scope, as illustrated below:
+
+```tsx
+<CounterContext.Provider create={() => createCounterController({count: 0})}>
+  <CounterButton />
+</CounterContext.Provider>,
+```
+
 ### Builder
 
 To target and filter the re-render process when new State is emitted from `Controller` in the same scope, you can use the `Builder` component.
