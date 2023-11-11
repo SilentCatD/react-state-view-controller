@@ -209,7 +209,7 @@ This component can then be used as follows:
 </Nested>,
 ```
 
-#### Functionally Define a Controller
+### Functionally Define a Controller
 
 When defining a `Controller` in a subclass manner, several advantages can be gained:
 
