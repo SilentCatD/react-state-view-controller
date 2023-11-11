@@ -1,6 +1,6 @@
 import Controller from './Controller'
 import { ControllerCreator, LinkedController } from './types'
-import { merge } from 'lodash'
+import merge from 'lodash.merge'
 
 function createController<C, S>(
   initialState: S,
