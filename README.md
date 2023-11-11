@@ -253,7 +253,7 @@ import { createLinkedControllerContext } from 'react-state-view-controller'
 const CounterContext = createLinkedControllerContext<CounterController, CounterState>()
 ```
 
-Finally, the CounterContext is provided to a scope, as illustrated below:
+Finally, the `CounterContext` is provided to a scope, as illustrated below:
 
 ```tsx
 <CounterContext.Provider create={() => createCounterController({count: 0})}>
