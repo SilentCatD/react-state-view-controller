@@ -20,7 +20,7 @@ import { useSelector } from './useSelector'
 import { useBuilder } from './useBuilder'
 import { useListener } from './useListener'
 import { createControllerContext, createLinkedControllerContext } from './ControllerContext'
-import { Subscription } from 'rxjs'
+import { Subscription, SubscriptionLike, TeardownLogic, Unsubscribable } from 'rxjs'
 import Nested, { NestedProps, ReceivableElement } from './Nested'
 import { createController } from './createController'
 
@@ -41,6 +41,9 @@ export type {
   StateSetter,
   StateGetter,
   ControllerCreator,
+  SubscriptionLike,
+  TeardownLogic,
+  Unsubscribable,
 }
 
 export {
