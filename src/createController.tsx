@@ -10,7 +10,7 @@ function createController<C, S>(
   class MergingController extends Controller<S> {
     constructor() {
       super(initialState)
-      this.controller = create(this.emit.bind(this), () => this.state)
+      this.controller = create(() => this.state, this.emit.bind(this))
     }
     controller: C
 

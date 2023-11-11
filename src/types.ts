@@ -34,7 +34,7 @@ export interface ControllerContext<C extends Controller<S>, S> {
 
 export type LinkedController<C, S> = C & Controller<S>
 
-export type StateEmitter<S> = (state: S) => void
+export type StateSetter<S> = (state: S) => void
 export type StateGetter<S> = () => S
 
-export type ControllerCreator<C, S> = (emit: StateEmitter<S>, state: StateGetter<S>) => C
+export type ControllerCreator<C, S> = (get: StateGetter<S>, set: StateSetter<S>) => C

@@ -8,8 +8,8 @@ import {
   Listener,
   ControllerContext,
   LinkedController,
-  StateEmitter,
   StateGetter,
+  StateSetter,
   ControllerCreator,
 } from './types'
 
@@ -38,7 +38,7 @@ export type {
   ReceivableElement,
   NestedProps,
   LinkedController,
-  StateEmitter,
+  StateSetter,
   StateGetter,
   ControllerCreator,
 }
