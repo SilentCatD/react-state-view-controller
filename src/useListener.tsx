@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import Controller from './Controller'
 import { ControllerContext, ListenerListenWhen } from './types'
 import { useController } from './useController'
+import { isEquals } from './utils'
 
 function useListener<C extends Controller<S>, S>(
   context: ControllerContext<C, S>,
@@ -16,7 +17,7 @@ function useListener<C extends Controller<S>, S>(
   useEffect(() => {
     const subcription = controller.observable.subscribe((newState) => {
       const state = stateRef.current
-      if (state === newState) {
+      if (isEquals(state, newState)) {
         return
       }
       if (listenWhen(state, newState) === true) {
