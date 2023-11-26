@@ -18,7 +18,7 @@ abstract class Controller<T> {
   }
 
   protected emit(state: Partial<T>) {
-    const newState: T = { ...this._state, state }
+    const newState: T = { ...this._state, ...state }
     if (isEquals(newState, this._state)) {
       return
     }

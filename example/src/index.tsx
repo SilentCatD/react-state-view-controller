@@ -61,17 +61,17 @@ class MultiCounterController extends Controller<MultiCounterState> {
     })
   }
   increaseCounter() {
-    this.emit({ ...this.state, count: this.state.count + 1 })
+    this.emit({ count: this.state.count + 1 })
+    console.log(this.state)
   }
   increaseCounter1() {
-    this.emit({ ...this.state, count2: this.state.count2 + 1 })
+    this.emit({ count2: this.state.count2 + 1 })
   }
   increaseCounter2() {
-    this.emit({ ...this.state, count3: this.state.count3 + 1 })
+    this.emit({ count3: this.state.count3 + 1 })
   }
   calcTotal() {
     this.emit({
-      ...this.state,
       total: this.state.count3 + this.state.count2 + this.state.count,
     })
   }
