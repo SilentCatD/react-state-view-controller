@@ -34,7 +34,7 @@ export interface ControllerContext<C extends Controller<S>, S> {
 
 export type LinkedController<C, S> = C & Controller<S>
 
-export type StateSetter<S> = (state: S) => void
+export type StateSetter<S> = (state: Partial<S>) => void
 export type StateGetter<S> = () => S
 
 export type ControllerCreator<C, S> = (get: StateGetter<S>, set: StateSetter<S>) => C

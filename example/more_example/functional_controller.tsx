@@ -20,17 +20,16 @@ const createMultiCounterController = () => {
     { count: 0, count2: 0, count3: 0, total: 0 },
     (get, set) => ({
       increaseCounter() {
-        set({ ...get(), count: get().count + 1 })
+        set({ count: get().count + 1 })
       },
       increaseCounter1() {
-        set({ ...get(), count2: get().count2 + 1 })
+        set({ count2: get().count2 + 1 })
       },
       increaseCounter2() {
-        set({ ...get(), count3: get().count3 + 1 })
+        set({ count3: get().count3 + 1 })
       },
       calcTotal() {
         set({
-          ...get(),
           total: get().count3 + get().count2 + get().count,
         })
       },
