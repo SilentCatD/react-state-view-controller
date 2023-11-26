@@ -83,9 +83,9 @@ To create a new `Controller`, you need to extend the `Controller` class, which p
 
 Do note that the `newState` object must be different from the old `State`. Otherwise, the `Controller` will just skip it. This optimization avoids unnecessary state updates.
 
-One of many common patterns is to handle all of the necessary logic to fetch data from an API in the `Controller`, then emit the data from within the `Controller`. For example:
-
 When emitting `newstate`, the `{...this.state}` is not needed. Object passed in the `emit(newState)` function will be merge with the existed current state.
+
+One of many common patterns is to handle all of the necessary logic to fetch data from an API in the `Controller`, then emit the data from within the `Controller`. For example:
 
 ```ts
 type CounterState = {
