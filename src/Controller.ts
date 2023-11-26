@@ -1,3 +1,4 @@
+import { isEquals } from './utils'
 import { Subject } from 'rxjs'
 abstract class Controller<T> {
   constructor(initialState: T) {
@@ -12,16 +13,17 @@ abstract class Controller<T> {
     return this._subject.asObservable()
   }
 
-  public get state() {
+  public get state(): T {
     return this._state
   }
 
-  protected emit(state: T) {
-    if (this._state === state) {
+  protected emit(state: Partial<T>) {
+    const newState: T = { ...this._state, state }
+    if (isEquals(newState, this._state)) {
       return
     }
-    this._state = state
-    this._subject.next(state)
+    this._state = newState
+    this._subject.next(this._state)
   }
 
   public async dispose() {
