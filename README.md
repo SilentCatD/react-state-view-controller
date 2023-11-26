@@ -44,13 +44,14 @@ abstract class Controller<T> {
   // The initial state of the UI
   constructor(initialState: T)
   // The observable to subscribe to if necessary
-  public get observable()
+  public get observable(): Observable<T>
   // The current state that the controller is maintaining
-  public get state()
+  public get state(): T
   // Emit a new state and trigger all listeners.
   // Note that it must be a new object, different from the old state,
   // or the new state emission will be skipped.
-  protected emit(state: T)
+  // Will merge with existed state
+  protected emit(state: Partial<T>)
   public async dispose() // Override if necessary to clean up any resources.
 }
 ```
@@ -84,11 +85,18 @@ Do note that the `newState` object must be different from the old `State`. Other
 
 One of many common patterns is to handle all of the necessary logic to fetch data from an API in the `Controller`, then emit the data from within the `Controller`. For example:
 
+When emitting `newstate`, the `{...this.state}` is not needed. Object passed in the `emit(newState)` function will be merge with the existed current state.
+
 ```ts
+type CounterState = {
+  loading: boolean;
+  count: number;
+}
+
 async fetchCounter() {
-  this.emit({ ...this.state, loading: true });
+  this.emit({ loading: true });
   const newCounter = await fetchDataFromSource();
-  this.emit({ ...this.state, loading: false, count: newCounter });
+  this.emit({ loading: false, count: newCounter });
 }
 ```
 
