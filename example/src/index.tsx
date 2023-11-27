@@ -1,43 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createController, createLinkedControllerContext, useListener, useSelector } from 'react-state-view-controller'
+import { Controller, createControllerContext, useListener, useSelector } from 'react-state-view-controller'
 
-type MultiCounterState = {
-  count: number
-  count2: number
-  count3: number
-  total: number
-}
-interface MultiCounterController {
-  increaseCounter: () => void
-  increaseCounter1: () => void
-  increaseCounter2: () => void
-  calcTotal: () => void
-}
-
-const createMultiCounterController = () => {
-  return createController<MultiCounterController, MultiCounterState>(
-    { count: 0, count2: 0, count3: 0, total: 0 },
-    (get, set) => ({
-      increaseCounter() {
-        set({ count: get().count + 1 })
-      },
-      increaseCounter1() {
-        set({ count2: get().count2 + 1 })
-      },
-      increaseCounter2() {
-        set({ count3: get().count3 + 1 })
-      },
-      calcTotal() {
-        set({
-          total: get().count3 + get().count2 + get().count,
-        })
-      },
-    }),
-  )
-}
-
-const MultiCounterContext = createLinkedControllerContext<MultiCounterController, MultiCounterState>()
+const MultiCounterContext = createControllerContext<MultiCounterController, MultiCounterState>()
 
 const ButtonsComp = () => {
   const controller = useListener(
@@ -69,7 +34,7 @@ const CounterComponent = (props: CounterComponentProps) => {
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   // <React.StrictMode>
-  <MultiCounterContext.Provider create={() => createMultiCounterController()}>
+  <MultiCounterContext.Provider create={() => new MultiCounterController()}>
     <CounterComponent id='1' stateSelect={(state) => state.count} />
     <CounterComponent id='2' stateSelect={(state) => state.count2} />
     <CounterComponent id='3' stateSelect={(state) => state.count3} />
@@ -78,3 +43,36 @@ root.render(
   </MultiCounterContext.Provider>,
   // {/* </React.trictMode> */}
 )
+
+type MultiCounterState = {
+  count: number
+  count2: number
+  count3: number
+  total: number
+}
+
+class MultiCounterController extends Controller<MultiCounterState> {
+  constructor() {
+    super({
+      count: 0,
+      count2: 0,
+      count3: 0,
+      total: 0,
+    })
+  }
+  increaseCounter() {
+    this.emit({ count: this.state.count + 1 })
+    console.log(this.state)
+  }
+  increaseCounter1() {
+    this.emit({ count2: this.state.count2 + 1 })
+  }
+  increaseCounter2() {
+    this.emit({ count3: this.state.count3 + 1 })
+  }
+  calcTotal() {
+    this.emit({
+      total: this.state.count3 + this.state.count2 + this.state.count,
+    })
+  }
+}
