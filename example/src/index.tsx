@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { Controller, createControllerContext, useListener, useSelector } from 'react-state-view-controller'
+import { Controller, createControllerContext, useBuilder, useListener, useSelector } from 'react-state-view-controller'
 
 const MultiCounterContext = createControllerContext<MultiCounterController, MultiCounterState>()
 
@@ -26,7 +26,12 @@ type CounterComponentProps = {
   stateSelect: (state: MultiCounterState) => number
 }
 const CounterComponent = (props: CounterComponentProps) => {
-  const [value] = useSelector(MultiCounterContext, props.stateSelect)
+  const [value] = useSelector(MultiCounterContext, (state) => {
+    console.log(state)
+    const selected = props.stateSelect(state)
+    console.log(selected)
+    return selected
+  })
   console.log(`comp with id ${props.id} re-render`)
   return <h2>{value}</h2>
 }

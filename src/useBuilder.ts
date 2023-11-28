@@ -12,7 +12,7 @@ function useBuilder<C extends Controller<S>, S>(controller: C, buildWhen?: Build
 function useBuilder<C extends Controller<S>, S>(
   source: ControllerContext<C, S> | C,
   buildWhen?: BuilderBuildWhen<S>,
-): [S, C] {
+): [S, C] | S {
   const controller = useControllerInternal(source) as C
   const [state, setState] = useState(() => controller.state)
   useListener<C, S>(
@@ -20,6 +20,9 @@ function useBuilder<C extends Controller<S>, S>(
     (newState) => setState(newState),
     (prev, curr) => buildWhen?.(prev, curr) ?? true,
   )
+  if (source instanceof Controller) {
+    return state
+  }
   return [state, controller]
 }
 

@@ -11,10 +11,13 @@ function useSelector<C extends Controller<S>, S, T>(controller: C, stateSelector
 function useSelector<C extends Controller<S>, S, T>(
   source: ControllerContext<C, S> | C,
   stateSelector: (state: S) => T,
-): [T, C] {
+): [T, C] | T {
   const controller = useControllerInternal(source) as C
   const buildWhen = (prev: S, curr: S) => stateSelector(prev) !== stateSelector(curr)
   const state = useBuilder<C, S>(controller, buildWhen)
+  if (source instanceof Controller) {
+    return stateSelector(state)
+  }
   return [stateSelector(state), controller]
 }
 

@@ -20,7 +20,7 @@ function useListener<C extends Controller<S>, S>(
   source: ControllerContext<C, S> | C,
   listener: (state: S) => void,
   listenWhen?: ListenerListenWhen<S>,
-): C {
+): C | void {
   const controller = useControllerInternal<C, S>(source) as C
   const stateRef = useRef<S>(controller.state)
 
@@ -42,6 +42,9 @@ function useListener<C extends Controller<S>, S>(
     }
   }, [callback, controller.observable, listenWhen])
 
+  if (source instanceof Controller) {
+    return
+  }
   return controller
 }
 
