@@ -15,6 +15,7 @@ import {
 
 import { ControllerNotProvided } from './error'
 
+import { useAutoDispose } from './useAutoDispose'
 import { useController } from './useController'
 import { useSelector } from './useSelector'
 import { useBuilder } from './useBuilder'
@@ -53,6 +54,7 @@ export {
   useBuilder,
   useSelector,
   useListener,
+  useAutoDispose,
   createController,
 }
 

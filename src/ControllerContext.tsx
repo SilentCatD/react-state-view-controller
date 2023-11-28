@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useEffect, useRef } from 'react'
+import { PropsWithChildren, createContext } from 'react'
 import Controller from './Controller'
 import {
   ControllerContext,
@@ -13,6 +13,7 @@ import {
 import { useBuilder } from './useBuilder'
 import { useListener } from './useListener'
 import { useController } from './useController'
+import { useAutoDispose } from './useAutoDispose'
 
 function createControllerContext<C extends Controller<S>, S>(): ControllerContext<C, S> {
   const reactContext = createContext<C>(undefined as any)
@@ -27,14 +28,8 @@ function createControllerContext<C extends Controller<S>, S>(): ControllerContex
     create,
     children,
   }: PropsWithChildren<ControllerProviderProps<C, S>>) => {
-    const controllerRef = useRef(create())
-    useEffect(() => {
-      const controller = controllerRef.current
-      return () => {
-        controller.dispose()
-      }
-    }, [])
-    return <reactContext.Provider value={controllerRef.current}>{children}</reactContext.Provider>
+    const controller = useAutoDispose<C, S>(() => create())
+    return <reactContext.Provider value={controller}>{children}</reactContext.Provider>
   }
 
   controllerContext.Provider = ControllerProvider
