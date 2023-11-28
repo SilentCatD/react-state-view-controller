@@ -1,18 +1,30 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import Controller from './Controller'
 import { ControllerContext, ListenerListenWhen } from './types'
-import { useController } from './useController'
+import { useControllerInternal } from './useController'
 import { isEquals } from './utils'
 
 function useListener<C extends Controller<S>, S>(
   context: ControllerContext<C, S>,
   listener: (state: S) => void,
-  listenWhen: ListenerListenWhen<S> = () => true,
+  listenWhen?: ListenerListenWhen<S>,
+): C
+
+function useListener<C extends Controller<S>, S>(
+  controller: C,
+  listener: (state: S) => void,
+  listenWhen?: ListenerListenWhen<S>,
+): void
+
+function useListener<C extends Controller<S>, S>(
+  source: ControllerContext<C, S> | C,
+  listener: (state: S) => void,
+  listenWhen?: ListenerListenWhen<S>,
 ): C {
-  const controller = useController<C, S>(context) as C
+  const controller = useControllerInternal<C, S>(source) as C
   const stateRef = useRef<S>(controller.state)
 
-  const callback = (newState: S) => listener(newState)
+  const callback = useCallback((newState: S) => listener(newState), [listener])
 
   useEffect(() => {
     const subcription = controller.observable.subscribe((newState) => {
@@ -20,7 +32,7 @@ function useListener<C extends Controller<S>, S>(
       if (isEquals(state, newState)) {
         return
       }
-      if (listenWhen(state, newState) === true) {
+      if (listenWhen?.(state, newState) ?? true) {
         callback(newState)
       }
       stateRef.current = newState
@@ -28,8 +40,7 @@ function useListener<C extends Controller<S>, S>(
     return () => {
       subcription.unsubscribe()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listenWhen, listener])
+  }, [callback, controller.observable, listenWhen])
 
   return controller
 }
