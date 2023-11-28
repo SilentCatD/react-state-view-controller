@@ -26,12 +26,7 @@ type CounterComponentProps = {
   stateSelect: (state: MultiCounterState) => number
 }
 const CounterComponent = (props: CounterComponentProps) => {
-  const [value] = useSelector(MultiCounterContext, (state) => {
-    console.log(state)
-    const selected = props.stateSelect(state)
-    console.log(selected)
-    return selected
-  })
+  const [value] = useSelector(MultiCounterContext, props.stateSelect)
   console.log(`comp with id ${props.id} re-render`)
   return <h2>{value}</h2>
 }
@@ -67,7 +62,6 @@ class MultiCounterController extends Controller<MultiCounterState> {
   }
   increaseCounter() {
     this.emit({ count: this.state.count + 1 })
-    console.log(this.state)
   }
   increaseCounter1() {
     this.emit({ count2: this.state.count2 + 1 })
