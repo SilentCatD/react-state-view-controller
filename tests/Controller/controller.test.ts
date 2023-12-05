@@ -27,14 +27,14 @@ class TestController extends Controller<TestState> {
   }
 }
 
-class SimpleCounter extends Controller<number> {
-  inc() {
-    this.emit(this.state + 1)
-  }
-  dec() {
-    this.emit(this.state - 1)
-  }
-}
+// class SimpleCounter extends Controller<number> {
+//   inc() {
+//     this.emit(this.state + 1)
+//   }
+//   dec() {
+//     this.emit(this.state - 1)
+//   }
+// }
 
 it('initialState respected', () => {
   const initialState: TestState = {
