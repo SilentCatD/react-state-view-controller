@@ -1,4 +1,3 @@
-import { lastValueFrom } from 'rxjs'
 import { Controller } from '../../src'
 
 type TestState = {
