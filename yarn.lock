@@ -5459,9 +5459,9 @@ react-is@^18.0.0:
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
 react-scoped-provider@latest:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-scoped-provider/-/react-scoped-provider-1.2.0.tgz#fa488ed03862b5528b95ebbdbb9298db3883ec01"
-  integrity sha512-l/lzClaRZPHcXqIMUoWCS4yNTPZRaQov6nO+2xjcQ8kB+0eOTJXmfx2XLRp4X00ENDeFmnSG1lxVpkKu2CJRmA==
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/react-scoped-provider/-/react-scoped-provider-1.3.2.tgz#5ae31e5d7328840f7c658f9a475c0882db36c122"
+  integrity sha512-lbIYppTWd+C8mKpWms6A4xiw/UZtUQ6k2qv7Qzt0Q63ydTofzf3siAOU+cY64db3MysOZfdvLtMuDyR+rS1KUQ==
 
 react@^18.2.0:
   version "18.2.0"

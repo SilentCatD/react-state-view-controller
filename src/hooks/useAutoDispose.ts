@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import Controller from '../Controller'
-import { Create } from '../types'
+import { Create, InferStateType } from '../types'
 
-function useAutoDispose<C extends Controller<S>, S>(create: Create<C>): C {
+function useAutoDispose<C extends Controller<InferStateType<C>>>(create: Create<C>): C {
   const controllerRef = useRef(create())
   useEffect(() => {
     return () => {

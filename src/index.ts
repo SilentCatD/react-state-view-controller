@@ -1,26 +1,19 @@
 import Controller from './Controller'
 import { Subscription, SubscriptionLike, TeardownLogic, Unsubscribable, Observable } from 'rxjs'
-import { Create } from './types'
+import { Create, Constructor, InferStateType, ShouldUpdate } from './types'
 import { useAutoDispose } from './hooks/useAutoDispose'
 import { ControllerProvider, ControllerProviderProps } from './ControllerProvider'
 import { MultiProvider, ReceivableElement, MultiProviderProps, useProvider } from 'react-scoped-provider'
 import { useListener } from './hooks/useListener'
+import { useBuilder } from './hooks/useBuilder'
+import { useSelector } from './hooks/useSelector'
 
+export { useSelector }
+export { useBuilder }
 export { useListener }
-export { MultiProvider, ReceivableElement, MultiProviderProps }
+export { MultiProvider, ReceivableElement, MultiProviderProps, useProvider }
 export { ControllerProvider, ControllerProviderProps }
-export { Create }
+export { Create, Constructor, InferStateType, ShouldUpdate }
 export { Controller }
 export { Subscription, SubscriptionLike, TeardownLogic, Unsubscribable, Observable }
 export { useAutoDispose }
-
-class TestController extends Controller<number> {
-  constructor() {
-    super(5)
-  }
-}
-
-const useTest = () => {
-  const test = new TestController()
-  const a = useListener(TestController, (state) => console.log(state))
-}

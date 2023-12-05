@@ -1,56 +1,62 @@
-import { ResourcesNotProvidedError, getObjectRuntimeName, useProvider } from 'react-scoped-provider'
 import Controller from '../Controller'
-
-type ListenerListenWhen<S> = (prevState: S, currentState: S) => boolean
-
-type InferStateType<C extends Controller<any>> = C extends Controller<infer S> ? S : never
+import { Constructor, InferStateType, ShouldUpdate } from '../types'
+import { useEffect, useRef } from 'react'
+import { useControllerResolver } from './useControllerResolver'
 
 function useListener<C extends Controller<InferStateType<C>>>(
-  ctor: new (...a: any) => C,
+  ctor: Constructor<C>,
   listener: (state: InferStateType<C>) => void,
-  listenWhen?: ListenerListenWhen<InferStateType<C>>,
+  listenWhen?: ShouldUpdate<InferStateType<C>>,
 ): C
 
 function useListener<C extends Controller<InferStateType<C>>>(
   controller: C,
   listener: (state: InferStateType<C>) => void,
-  listenWhen?: ListenerListenWhen<InferStateType<C>>,
+  listenWhen?: ShouldUpdate<InferStateType<C>>,
 ): void
 
 function useListener<C extends Controller<InferStateType<C>>>(
-  source: (new (...a: any) => C) | C,
+  source: Constructor<C> | C,
   listener: (state: InferStateType<C>) => void,
-  listenWhen?: ListenerListenWhen<InferStateType<C>>,
+  listenWhen?: ShouldUpdate<InferStateType<C>>,
 ): C | undefined {
-  const controller = useResolveController(source, { allowUndef: true })
+  const controller = useControllerResolver(source)
+  const stateRef = useRef(controller.state)
+  const listenerRef = useRef(listener)
+  const listenWhenRef = useRef(listenWhen)
+
+  useEffect(() => {
+    listenerRef.current = listener
+  }, [listener])
+
+  useEffect(() => {
+    listenWhenRef.current = listenWhen
+  }, [listenWhen])
+
+  useEffect(() => {
+    const subscription = controller.observable.subscribe((state) => {
+      const currentState = stateRef.current
+      if (currentState === state) {
+        return
+      }
+      if (listenWhenRef.current !== undefined) {
+        if (listenWhenRef.current(currentState, state)) {
+          listenerRef.current(state)
+        }
+      } else {
+        listenerRef.current(state)
+      }
+      stateRef.current = state
+    })
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [controller])
+
+  if (source instanceof Controller) {
+    return undefined
+  }
   return controller
 }
 
-export { useListener }
-
-interface UseResolveControllerConfigs {
-  allowUndef?: boolean
-}
-
-function useResolveController<C extends Controller<InferStateType<C>>>(
-  source: (new (...a: any) => C) | C,
-  configs?: UseResolveControllerConfigs,
-): C | undefined {
-  const providedController = useProvider(
-    source instanceof Controller ? (source.constructor as new (...a: any) => C) : source,
-    {
-      allowUndef: true,
-    },
-  )
-  const passedController = source instanceof Controller ? source : undefined
-  const resolvedController = passedController ?? providedController
-  if (resolvedController === undefined) {
-    if (configs?.allowUndef === true) {
-      return undefined
-    }
-    throw new ResourcesNotProvidedError(getObjectRuntimeName(source))
-  }
-  return resolvedController
-}
-
-export { useResolveController }
+export { useListener, ListenerListenWhen }
