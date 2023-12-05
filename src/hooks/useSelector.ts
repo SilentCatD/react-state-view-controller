@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import Controller from '../Controller'
 import { Constructor, InferStateType } from '../types'
 import { useBuilder } from './useBuilder'
@@ -18,9 +19,13 @@ function useSelector<C extends Controller<InferStateType<C>>, T>(
   selector: (state: InferStateType<C>) => T,
 ): [T, C] | T {
   const controller = useControllerResolver(source)
-  const state = useBuilder(controller, (prev, curr) => {
-    return selector(prev) != selector(curr)
-  })
+  const buildWhenCallback = useCallback(
+    (prev: InferStateType<C>, curr: InferStateType<C>) => {
+      return selector(prev) != selector(curr)
+    },
+    [selector],
+  )
+  const state = useBuilder(controller, buildWhenCallback)
   if (source instanceof Controller) {
     return selector(state)
   }

@@ -59,4 +59,4 @@ function useListener<C extends Controller<InferStateType<C>>>(
   return controller
 }
 
-export { useListener, ListenerListenWhen }
+export { useListener }

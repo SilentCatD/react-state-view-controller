@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Controller from '../Controller'
 import { Constructor, InferStateType, ShouldUpdate } from '../types'
 import { useControllerResolver } from './useControllerResolver'
@@ -20,13 +20,12 @@ function useBuilder<C extends Controller<InferStateType<C>>>(
 ): [InferStateType<C>, C] | InferStateType<C> {
   const controller = useControllerResolver(source)
   const [state, setState] = useState(controller.state)
-  useListener(
-    controller,
-    (state) => {
-      setState(state)
-    },
-    buildWhen,
-  )
+
+  const setStateCallback = useCallback((state: InferStateType<C>) => {
+    setState(state)
+  }, [])
+
+  useListener(controller, setStateCallback, buildWhen)
   if (source instanceof Controller) {
     return state
   }
