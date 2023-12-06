@@ -60,7 +60,6 @@ it('state update sync', () => {
   const testController = new TestController(initialState)
   testController.incCount()
   expect(testController.state.count).toBe(2)
-  console.log(testController.state.count)
 
   testController.incCount2()
   expect(testController.state.count2).toBe(3)
