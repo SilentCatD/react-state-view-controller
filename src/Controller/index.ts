@@ -1,4 +1,5 @@
 import { Observable, Subject } from 'rxjs'
+import { isEqual } from '../utils'
 abstract class Controller<T> {
   constructor(initialState: T) {
     this._state = initialState
@@ -16,9 +17,14 @@ abstract class Controller<T> {
     return this._state
   }
 
+  protected compareState(previous: T, current: T): boolean {
+    // return true when equal
+    return isEqual(previous, current)
+  }
+
   protected emit(state: Partial<T>): void {
     const newState: T = { ...this._state, ...state }
-    if (newState === this._state) {
+    if (this.compareState(this._state, newState)) {
       return
     }
     this._state = newState

@@ -9,4 +9,6 @@ type InferStateType<C extends Controller<any>> = C extends Controller<infer S> ?
 
 type ShouldUpdate<S> = (prevState: S, currentState: S) => boolean
 
-export type { Create, Constructor, InferStateType, ShouldUpdate }
+type StateCompare<S> = (prevState: S, currentState: S) => boolean
+
+export type { Create, Constructor, InferStateType, ShouldUpdate, StateCompare }

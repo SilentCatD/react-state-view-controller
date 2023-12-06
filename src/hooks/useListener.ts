@@ -1,29 +1,36 @@
 import Controller from '../Controller'
-import { Constructor, InferStateType, ShouldUpdate } from '../types'
+import { Constructor, InferStateType, ShouldUpdate, StateCompare } from '../types'
 import { useEffect, useRef } from 'react'
 import { useControllerResolver } from './useControllerResolver'
+import { isEqual } from '../utils'
 
 function useListener<C extends Controller<InferStateType<C>>>(
   ctor: Constructor<C>,
   listener: (state: InferStateType<C>) => void,
   listenWhen?: ShouldUpdate<InferStateType<C>>,
+  stateCompare?: StateCompare<InferStateType<C>>,
 ): C
 
 function useListener<C extends Controller<InferStateType<C>>>(
   controller: C,
   listener: (state: InferStateType<C>) => void,
   listenWhen?: ShouldUpdate<InferStateType<C>>,
+  stateCompare?: StateCompare<InferStateType<C>>,
 ): void
 
 function useListener<C extends Controller<InferStateType<C>>>(
   source: Constructor<C> | C,
   listener: (state: InferStateType<C>) => void,
   listenWhen?: ShouldUpdate<InferStateType<C>>,
+  stateCompare?: StateCompare<InferStateType<C>>,
 ): C | undefined {
   const controller = useControllerResolver(source)
   const stateRef = useRef(controller.state)
   const listenerRef = useRef(listener)
   const listenWhenRef = useRef(listenWhen)
+  const stateCompareRef = useRef(
+    stateCompare ?? ((prev: InferStateType<C>, curr: InferStateType<C>) => isEqual(prev, curr)),
+  )
 
   useEffect(() => {
     listenerRef.current = listener
@@ -34,9 +41,17 @@ function useListener<C extends Controller<InferStateType<C>>>(
   }, [listenWhen])
 
   useEffect(() => {
+    if (stateCompare !== undefined) {
+      stateCompareRef.current = stateCompare
+    } else {
+      stateCompareRef.current = (prev: InferStateType<C>, curr: InferStateType<C>) => isEqual(prev, curr)
+    }
+  }, [stateCompare])
+
+  useEffect(() => {
     const subscription = controller.observable.subscribe((state) => {
       const currentState = stateRef.current
-      if (currentState === state) {
+      if (stateCompareRef.current(currentState, state)) {
         return
       }
       if (listenWhenRef.current !== undefined) {
