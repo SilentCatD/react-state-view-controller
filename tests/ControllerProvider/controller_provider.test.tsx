@@ -8,6 +8,7 @@ class TestController extends Controller<number> {
 }
 
 class TestControllerSub extends TestController {}
+class TestControllerSub2 extends TestController {}
 
 const DisplayRendered = () => {
   useProvider(TestController)
@@ -54,7 +55,7 @@ it('render provided create without error', () => {
 
 it('render provided create ctor without error', () => {
   const { container } = render(
-    <ControllerProvider ctor={TestController} source={() => new TestControllerSub()}>
+    <ControllerProvider ctor={TestController} source={() => new TestControllerSub2()}>
       <DisplayRendered />
     </ControllerProvider>,
   )
