@@ -1,6 +1,6 @@
 import { TestScheduler } from 'rxjs/testing'
-import { Controller, useListener } from '../../../src'
-import { renderHook } from '@testing-library/react'
+import { Controller, ControllerProvider, useListener } from '../../../src'
+import { getByTestId, render } from '@testing-library/react'
 import { tap } from 'rxjs'
 
 class TestController extends Controller<number> {
@@ -39,11 +39,29 @@ it('emit object values every reEmit', () => {
   })
 })
 
+type DisplayRenderedProps = {
+  callback: (state: number) => void
+  listenWhen?: (prev: number, curr: number) => boolean
+  stateComp?: (prev: number, curr: number) => boolean
+}
+const DisplayRendered = ({ callback, listenWhen, stateComp }: DisplayRenderedProps) => {
+  useListener(TestController, callback, listenWhen, stateComp)
+  return <h1 data-testid='text'>Rendered</h1>
+}
+
 it('listenWhen respected', (done) => {
   const callbackFn = jest.fn((state) => state)
   const listenWhenFn = jest.fn((prev, curr) => prev === curr)
   const instance = new TestController()
-  renderHook(() => useListener(instance, callbackFn, listenWhenFn))
+  const { container } = render(
+    <ControllerProvider ctor={TestController} source={instance}>
+      <DisplayRendered callback={callbackFn} listenWhen={listenWhenFn} />
+    </ControllerProvider>,
+  )
+  const rendered = getByTestId(container, 'text')
+  const renderedText = rendered.textContent
+  const expectedText = 'Rendered'
+  expect(renderedText).toBe(expectedText)
   instance.inc()
   instance.inc()
   instance.inc()
@@ -67,7 +85,15 @@ it('listenWhen respected', (done) => {
 it('listener called', (done) => {
   const callbackFn = jest.fn((x: number) => x)
   const instance = new TestController()
-  renderHook(() => useListener(instance, (state) => callbackFn(state)))
+  const { container } = render(
+    <ControllerProvider ctor={TestController} source={instance}>
+      <DisplayRendered callback={callbackFn} />
+    </ControllerProvider>,
+  )
+  const rendered = getByTestId(container, 'text')
+  const renderedText = rendered.textContent
+  const expectedText = 'Rendered'
+  expect(renderedText).toBe(expectedText)
   instance.inc()
   instance.inc()
   instance.inc()
@@ -85,7 +111,15 @@ it('listener called', (done) => {
 it('default state compare respected', (done) => {
   const callbackFn = jest.fn((x: number) => x)
   const instance = new TestController()
-  renderHook(() => useListener(instance, (state) => callbackFn(state)))
+  const { container } = render(
+    <ControllerProvider ctor={TestController} source={instance}>
+      <DisplayRendered callback={callbackFn} />
+    </ControllerProvider>,
+  )
+  const rendered = getByTestId(container, 'text')
+  const renderedText = rendered.textContent
+  const expectedText = 'Rendered'
+  expect(renderedText).toBe(expectedText)
   instance.inc()
   instance.reEmit()
   instance.reEmit()
@@ -100,14 +134,15 @@ it('default state compare respected', (done) => {
 it('specified state compare respected', (done) => {
   const callbackFn = jest.fn((x: number) => x)
   const instance = new TestController()
-  renderHook(() =>
-    useListener(
-      instance,
-      (state) => callbackFn(state),
-      () => true,
-      () => false,
-    ),
+  const { container } = render(
+    <ControllerProvider ctor={TestController} source={instance}>
+      <DisplayRendered callback={callbackFn} listenWhen={() => true} stateComp={() => false} />
+    </ControllerProvider>,
   )
+  const rendered = getByTestId(container, 'text')
+  const renderedText = rendered.textContent
+  const expectedText = 'Rendered'
+  expect(renderedText).toBe(expectedText)
   instance.inc()
   instance.reEmit()
   instance.reEmit()
@@ -124,8 +159,20 @@ it('specified state compare respected', (done) => {
   done()
 })
 
-it('useListener controller return nothing', () => {
+const DisplayRenderedProvided = () => {
+  const controller = useListener(TestController, () => {})
+  return <h1 data-testid='text'>Rendered: {controller.state}</h1>
+}
+
+it('ctor useListener return controller', () => {
   const instance = new TestController()
-  const { result } = renderHook(() => useListener(instance, () => {}))
-  expect(result.current).toBe(undefined)
+  const { container } = render(
+    <ControllerProvider ctor={TestController} source={instance}>
+      <DisplayRenderedProvided />
+    </ControllerProvider>,
+  )
+  const rendered = getByTestId(container, 'text')
+  const renderedText = rendered.textContent
+  const expectedText = 'Rendered: 0'
+  expect(renderedText).toBe(expectedText)
 })
