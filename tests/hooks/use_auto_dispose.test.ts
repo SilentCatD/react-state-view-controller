@@ -13,7 +13,6 @@ it('dispose when unmounted', () => {
   const { unmount } = renderHook(() => useAutoDispose(() => instance))
   unmount()
   expect(instance.dispose).toHaveBeenCalledTimes(1)
-  jest.restoreAllMocks()
 })
 
 it('create resources', () => {
@@ -23,6 +22,7 @@ it('create resources', () => {
   const controller = result.current
   expect(controller).toBeInstanceOf(TestController)
   expect(mockCreate.mock.calls.length).toBe(1)
+  jest.restoreAllMocks()
 })
 
 it('resouces is the same', () => {
@@ -34,4 +34,5 @@ it('resouces is the same', () => {
   expect(controller).toBeInstanceOf(TestController)
   expect(controller).toBe(instance)
   expect(mockCreate.mock.calls.length).toBe(1)
+  jest.restoreAllMocks()
 })

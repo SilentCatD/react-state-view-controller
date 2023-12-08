@@ -1,6 +1,6 @@
 import Controller from '../Controller'
 import { Constructor, InferStateType, ShouldUpdate, StateCompare } from '../types'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useControllerResolver } from './useControllerResolver'
 import { isEqual } from '../utils'
 
@@ -28,9 +28,11 @@ function useListener<C extends Controller<InferStateType<C>>>(
   const stateRef = useRef(controller.state)
   const listenerRef = useRef(listener)
   const listenWhenRef = useRef(listenWhen)
-  const stateCompareRef = useRef(
-    stateCompare ?? ((prev: InferStateType<C>, curr: InferStateType<C>) => isEqual(prev, curr)),
+  const defaultStateCompareCallback = useCallback(
+    (prev: InferStateType<C>, curr: InferStateType<C>) => isEqual(prev, curr),
+    [],
   )
+  const stateCompareRef = useRef(defaultStateCompareCallback)
 
   useEffect(() => {
     listenerRef.current = listener
@@ -44,8 +46,9 @@ function useListener<C extends Controller<InferStateType<C>>>(
     if (stateCompare !== undefined) {
       stateCompareRef.current = stateCompare
     } else {
-      stateCompareRef.current = (prev: InferStateType<C>, curr: InferStateType<C>) => isEqual(prev, curr)
+      stateCompareRef.current = defaultStateCompareCallback
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateCompare])
 
   useEffect(() => {
