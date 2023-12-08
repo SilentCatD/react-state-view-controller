@@ -1,4 +1,21 @@
-[![npm version](https://badge.fury.io/js/react-state-view-controller.svg)](https://badge.fury.io/js/react-state-view-controller)
+# React Scoped Provider
+
+[![NPM version][npm-image]][npm-url]
+[![codecov][codecov-image]][codecov-url]
+[![npm bundle size][npm-bundle-size-image]][npm-bundle-size-url]
+[![Build][github-build]][github-build-url]
+[![License][github-license]][github-license-url]
+
+[codecov-url]: https://codecov.io/github/SilentCatD/react-state-view-controller
+[codecov-image]: https://codecov.io/github/SilentCatD/react-state-view-controller/graph/badge.svg?token=QVRSQ5QI4D
+[npm-url]: https://www.npmjs.com/package/react-state-view-controller
+[npm-image]: https://img.shields.io/npm/v/react-state-view-controller
+[npm-bundle-size-image]: https://img.shields.io/bundlephobia/min/react-state-view-controller
+[npm-bundle-size-url]: https://bundlephobia.com/package/react-state-view-controller
+[github-license]: https://img.shields.io/github/license/SilentCatD/react-state-view-controller
+[github-license-url]: https://github.com/SilentCatD/react-scoped-provider/blob/main/LICENSE
+[github-build]: https://github.com/SilentCatD/react-state-view-controller/actions/workflows/publish.yml/badge.svg
+[github-build-url]: https://github.com/SilentCatD/react-state-view-controller/actions/workflows/publish.yml
 
 # React State-View-Controller
 
