@@ -46,7 +46,7 @@ This library is created to address the concerns mentioned above.
 
 ### Controller
 
-Defining a `Controller` for a view for view group in a class manner will benefit from these criterias:
+Defining a `Controller` for a view or a view group in subclass manner will benefit from these criterias:
 
 - `Inter-Controller Subscription`: `Controller` can subscribe to and depend on each other, allowing for the internal triggering of state emissions.
 
@@ -416,6 +416,12 @@ const controller = useListener(
 ```
 
 Note that this hook is not intended by default to cause re-render, it just simply triggers callback
+
+## For other types
+
+Of course, a view `Controller` is not the only thing that we need to DI in a production app, we have services, repositories, models,... or other types of data.
+
+To acommondate these, you can check out the [react-scoped-provider](https://www.npmjs.com/package/react-scoped-provider) library, it is fully compatible with this library, in fact, the `useProvider` hook is just re-import and re-export from it.
 
 ## Conclusion
 
