@@ -1,4 +1,4 @@
-import { Controller } from '../../src'
+import { Controller, Observable, Subscription } from '../../src'
 
 type TestState = {
   count: number
@@ -84,4 +84,28 @@ it('state is not-change/skipped when the same value emitted', () => {
   const newState = testController.state
 
   expect(oldState).toBe(newState)
+})
+
+it('controller observable is rxjs observable', () => {
+  const initialState: TestState = {
+    count: 1,
+    count2: 2,
+    count3: 3,
+    count4: 4,
+  }
+  const testController = new TestController(initialState)
+  expect(testController.observable).toBeInstanceOf(Observable)
+})
+
+it('controller observable can be subscribe', () => {
+  const initialState: TestState = {
+    count: 1,
+    count2: 2,
+    count3: 3,
+    count4: 4,
+  }
+  const testController = new TestController(initialState)
+  const subscription = testController.observable.subscribe()
+  expect(subscription).toBeInstanceOf(Subscription)
+  subscription.unsubscribe()
 })
