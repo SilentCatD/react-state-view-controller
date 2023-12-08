@@ -4,8 +4,8 @@ import { getByTestId, render } from '@testing-library/react'
 import { tap } from 'rxjs'
 
 class TestController extends Controller<number> {
-  constructor() {
-    super(0)
+  constructor(initialValue?: number) {
+    super(initialValue ?? 0)
   }
   inc() {
     this.emit(this.state + 1)
@@ -165,7 +165,7 @@ const DisplayRenderedProvided = () => {
 }
 
 it('ctor useListener return controller', () => {
-  const instance = new TestController()
+  const instance = new TestController(5)
   const { container } = render(
     <ControllerProvider ctor={TestController} source={instance}>
       <DisplayRenderedProvided />
@@ -173,6 +173,6 @@ it('ctor useListener return controller', () => {
   )
   const rendered = getByTestId(container, 'text')
   const renderedText = rendered.textContent
-  const expectedText = 'Rendered: 0'
+  const expectedText = 'Rendered: 5'
   expect(renderedText).toBe(expectedText)
 })
