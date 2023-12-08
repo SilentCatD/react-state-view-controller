@@ -3,7 +3,13 @@ import { Subscription, SubscriptionLike, TeardownLogic, Unsubscribable, Observab
 import { Create, Constructor, InferStateType, ShouldUpdate, StateCompare } from './types'
 import { useAutoDispose } from './hooks/useAutoDispose'
 import { ControllerProvider, ControllerProviderProps } from './ControllerProvider'
-import { MultiProvider, ReceivableElement, MultiProviderProps, useProvider } from 'react-scoped-provider'
+import {
+  MultiProvider,
+  ReceivableElement,
+  MultiProviderProps,
+  useProvider,
+  ResourcesNotProvidedError,
+} from 'react-scoped-provider'
 import { useListener } from './hooks/useListener'
 import { useBuilder } from './hooks/useBuilder'
 import { useSelector } from './hooks/useSelector'
@@ -19,7 +25,7 @@ export { Listener, ListenerProps }
 export { useSelector }
 export { useBuilder }
 export { useListener }
-export { MultiProvider, ReceivableElement, MultiProviderProps, useProvider }
+export { MultiProvider, ReceivableElement, MultiProviderProps, useProvider, ResourcesNotProvidedError }
 export { ControllerProvider, ControllerProviderProps }
 export { useAutoDispose }
 export { Create, Constructor, InferStateType, ShouldUpdate, StateCompare }
