@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - run: yarn
+      - run: yarn test
+      - run: yarn build
+      - uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  publish-npm:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
+      - run: yarn
+      - run: yarn publish --new-version $PACKAGE_VERSION
+        env:
+          PACKAGE_VERSION: ${{env.PACKAGE_VERSION}}
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+  test-example:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - working-directory: ./example
+        run: |
+          yarn 
+          yarn test
+          yarn build
