@@ -45,7 +45,6 @@ type DisplayRenderedProps = {
 }
 const DisplayRendered = ({ buildWhen, stateComp }: DisplayRenderedProps) => {
   const [state, controller] = useBuilder(TestController, buildWhen, stateComp)
-  console.log(controller)
   return (
     <>
       <h1 data-testid='text'>{state}</h1>
