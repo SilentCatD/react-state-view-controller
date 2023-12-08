@@ -6,7 +6,7 @@ import { isEqual } from '../utils'
 
 function useListener<C extends Controller<InferStateType<C>>>(
   ctor: Constructor<C>,
-  listener: (state: InferStateType<C>) => void,
+  listener: (state: InferStateType<C>, controller: C) => void,
   listenWhen?: ShouldUpdate<InferStateType<C>>,
   stateCompare?: StateCompare<InferStateType<C>>,
 ): C
@@ -20,7 +20,7 @@ function useListener<C extends Controller<InferStateType<C>>>(
 
 function useListener<C extends Controller<InferStateType<C>>>(
   source: Constructor<C> | C,
-  listener: (state: InferStateType<C>) => void,
+  listener: (state: InferStateType<C>, controller?: C) => void,
   listenWhen?: ShouldUpdate<InferStateType<C>>,
   stateCompare?: StateCompare<InferStateType<C>>,
 ): C | undefined {
@@ -59,10 +59,10 @@ function useListener<C extends Controller<InferStateType<C>>>(
       }
       if (listenWhenRef.current !== undefined) {
         if (listenWhenRef.current(currentState, state)) {
-          listenerRef.current(state)
+          listenerRef.current(state, controller)
         }
       } else {
-        listenerRef.current(state)
+        listenerRef.current(state, controller)
       }
       stateRef.current = state
     })

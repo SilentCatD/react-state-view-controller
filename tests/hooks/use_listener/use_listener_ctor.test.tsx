@@ -40,7 +40,7 @@ it('emit object values every reEmit', () => {
 })
 
 type DisplayRenderedProps = {
-  callback: (state: number) => void
+  callback: (state: number, controller: TestController) => void
   listenWhen?: (prev: number, curr: number) => boolean
   stateComp?: (prev: number, curr: number) => boolean
 }
@@ -50,7 +50,7 @@ const DisplayRendered = ({ callback, listenWhen, stateComp }: DisplayRenderedPro
 }
 
 it('listenWhen respected', (done) => {
-  const callbackFn = jest.fn((state) => state)
+  const callbackFn = jest.fn((state: number, controller: TestController) => [state, controller])
   const listenWhenFn = jest.fn((prev, curr) => prev === curr)
   const instance = new TestController()
   const { container } = render(
@@ -83,7 +83,7 @@ it('listenWhen respected', (done) => {
 })
 
 it('listener called', (done) => {
-  const callbackFn = jest.fn((x: number) => x)
+  const callbackFn = jest.fn((x: number, controller: TestController) => [x, controller])
   const instance = new TestController()
   const { container } = render(
     <ControllerProvider ctor={TestController} source={instance}>
@@ -100,6 +100,7 @@ it('listener called', (done) => {
   instance.inc()
   instance.inc()
   expect(callbackFn).toHaveBeenCalledTimes(5)
+  expect(callbackFn.mock.calls[0][1]).toBe(instance)
   expect(callbackFn.mock.calls[0][0]).toBe(1)
   expect(callbackFn.mock.calls[1][0]).toBe(2)
   expect(callbackFn.mock.calls[2][0]).toBe(3)
@@ -109,7 +110,7 @@ it('listener called', (done) => {
 })
 
 it('default state compare respected', (done) => {
-  const callbackFn = jest.fn((x: number) => x)
+  const callbackFn = jest.fn((x: number, controller: TestController) => [x, controller])
   const instance = new TestController()
   const { container } = render(
     <ControllerProvider ctor={TestController} source={instance}>
@@ -127,12 +128,13 @@ it('default state compare respected', (done) => {
   instance.reEmit()
   instance.reEmit()
   expect(callbackFn).toHaveBeenCalledTimes(1)
+  expect(callbackFn.mock.calls[0][1]).toBe(instance)
   expect(callbackFn.mock.calls[0][0]).toBe(1)
   done()
 })
 
 it('specified state compare respected', (done) => {
-  const callbackFn = jest.fn((x: number) => x)
+  const callbackFn = jest.fn((x: number, controller: TestController) => [x, controller])
   const instance = new TestController()
   const { container } = render(
     <ControllerProvider ctor={TestController} source={instance}>
@@ -150,6 +152,7 @@ it('specified state compare respected', (done) => {
   instance.reEmit()
   instance.reEmit()
   expect(callbackFn).toHaveBeenCalledTimes(6)
+  expect(callbackFn.mock.calls[0][1]).toBe(instance)
   expect(callbackFn.mock.calls[0][0]).toBe(1)
   expect(callbackFn.mock.calls[0][0]).toBe(1)
   expect(callbackFn.mock.calls[1][0]).toBe(1)
