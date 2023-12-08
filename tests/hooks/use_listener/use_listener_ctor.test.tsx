@@ -1,6 +1,6 @@
 import { TestScheduler } from 'rxjs/testing'
-import { Controller, ControllerProvider, useListener } from '../../../src'
-import { getByTestId, render } from '@testing-library/react'
+import { Controller, ControllerProvider, ResourcesNotProvidedError, useListener } from '../../../src'
+import { getByTestId, render, waitFor } from '@testing-library/react'
 import { tap } from 'rxjs'
 
 class TestController extends Controller<number> {
@@ -175,4 +175,14 @@ it('ctor useListener return controller', () => {
   const renderedText = rendered.textContent
   const expectedText = 'Rendered: 5'
   expect(renderedText).toBe(expectedText)
+})
+
+it('throw error when not provided ctor', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => jest.fn())
+
+  const renderer = () => {
+    render(<DisplayRenderedProvided />)
+  }
+  await waitFor(() => expect(renderer).toThrow(ResourcesNotProvidedError))
+  jest.restoreAllMocks()
 })

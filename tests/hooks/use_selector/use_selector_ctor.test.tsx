@@ -1,5 +1,5 @@
 import { TestScheduler } from 'rxjs/testing'
-import { Controller, ControllerProvider, useSelector } from '../../../src'
+import { Controller, ControllerProvider, ResourcesNotProvidedError, useSelector } from '../../../src'
 import { act, getByTestId, render, waitFor } from '@testing-library/react'
 import { tap } from 'rxjs'
 
@@ -134,4 +134,24 @@ it('useSelector cto return [state, controller]', () => {
   const renderedControllerText = renderedController.textContent
   const expectedControllerText = 'TestController'
   expect(renderedControllerText).toBe(expectedControllerText)
+})
+
+it('throw error when not provided ctor', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => jest.fn())
+
+  const renderer = () => {
+    render(<DisplayRendered />)
+  }
+  await waitFor(() => expect(renderer).toThrow(ResourcesNotProvidedError))
+  jest.restoreAllMocks()
+})
+
+it('throw error when not provided ctor', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => jest.fn())
+
+  const renderer = () => {
+    render(<DisplayRendered />)
+  }
+  await waitFor(() => expect(renderer).toThrow(ResourcesNotProvidedError))
+  jest.restoreAllMocks()
 })
