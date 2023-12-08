@@ -17,8 +17,6 @@
 [github-build]: https://github.com/SilentCatD/react-state-view-controller/actions/workflows/publish.yml/badge.svg
 [github-build-url]: https://github.com/SilentCatD/react-state-view-controller/actions/workflows/publish.yml
 
-[Example](https://github.com/SilentCatD/react-state-view-controller/tree/main/example)
-
 ## Overview
 
 In my opinion, a robust state management system should effectively adhere to the following criteria:
