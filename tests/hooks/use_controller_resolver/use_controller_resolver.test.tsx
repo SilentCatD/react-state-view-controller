@@ -1,6 +1,6 @@
 import { getByTestId, render, waitFor } from '@testing-library/react'
 import { Constructor, Controller, ControllerProvider, ResourcesNotProvidedError } from '../../../src'
-import { useControllerResolver } from '../../../src/hooks/useControllerResolver'
+import { useControllerResolver } from '../../../src/'
 import { PropsWithChildren } from 'react'
 
 class TestController extends Controller<number> {

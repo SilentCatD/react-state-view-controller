@@ -13,6 +13,7 @@ import {
 import { useListener } from './hooks/useListener'
 import { useBuilder } from './hooks/useBuilder'
 import { useSelector } from './hooks/useSelector'
+import { useControllerResolver } from './hooks/useControllerResolver'
 import { Listener, ListenerProps } from './Listener'
 import { Builder, BuilderProps } from './Builder'
 import { Selector, SelectorProps } from './Selector'
@@ -25,6 +26,7 @@ export { Listener, ListenerProps }
 export { useSelector }
 export { useBuilder }
 export { useListener }
+export { useControllerResolver }
 export { MultiProvider, ReceivableElement, MultiProviderProps, useProvider, ResourcesNotProvidedError }
 export { ControllerProvider, ControllerProviderProps }
 export { useAutoDispose }
