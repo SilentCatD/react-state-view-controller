@@ -23,7 +23,12 @@ abstract class Controller<T> {
   }
 
   protected emit(state: Partial<T>): void {
-    const newState: T = { ...this._state, ...state }
+    let newState: T
+    if (typeof state === 'object') {
+      newState = { ...this._state, ...state }
+    } else {
+      newState = state
+    }
     if (this.compareState(this._state, newState)) {
       return
     }

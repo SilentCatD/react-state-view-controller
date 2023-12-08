@@ -24,16 +24,11 @@ class TestController extends Controller<TestState> {
   incCount4() {
     this.emit({ count4: this.state.count4 + 1 })
   }
-}
 
-// class SimpleCounter extends Controller<number> {
-//   inc() {
-//     this.emit(this.state + 1)
-//   }
-//   dec() {
-//     this.emit(this.state - 1)
-//   }
-// }
+  emitState(state: TestState) {
+    this.emit(state)
+  }
+}
 
 it('initialState respected', () => {
   const initialState: TestState = {
@@ -69,4 +64,24 @@ it('state update sync', () => {
 
   testController.incCount4()
   expect(testController.state.count4).toBe(5)
+})
+
+it('state is not-change/skipped when the same value emitted', () => {
+  const initialState: TestState = {
+    count: 1,
+    count2: 2,
+    count3: 3,
+    count4: 4,
+  }
+  const testController = new TestController(initialState)
+  const oldState = testController.state
+  testController.emitState({
+    count: 1,
+    count2: 2,
+    count3: 3,
+    count4: 4,
+  })
+  const newState = testController.state
+
+  expect(oldState).toBe(newState)
 })
