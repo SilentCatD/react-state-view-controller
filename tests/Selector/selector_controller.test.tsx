@@ -1,20 +1,22 @@
 import { TestScheduler } from 'rxjs/testing'
 import { Controller, Selector } from '../../src'
-import { act, getByTestId, render, waitFor } from '@testing-library/react'
+import { act, getByTestId, render } from '@testing-library/react'
 import { tap } from 'rxjs'
-
-const asyncDelay = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 type CounterData = {
   counter: number
+  counter2: number
 }
 
 class TestController extends Controller<CounterData> {
   constructor(initialState?: CounterData) {
-    super(initialState ?? { counter: 0 })
+    super(initialState ?? { counter: 0, counter2: 0 })
   }
   inc() {
     this.emit({ counter: this.state.counter + 1 })
+  }
+  inc2() {
+    this.emit({ counter2: this.state.counter2 + 1 })
   }
   protected compareState(): boolean {
     return false
@@ -36,7 +38,7 @@ it('emit object values every reEmit', () => {
 
   const expectedMarbles = '-aaaa'
   const expectedValues = {
-    a: { counter: 0 },
+    a: { counter: 0, counter2: 0 },
   }
   const eventObservable = testController.observable.pipe()
   testScheduler.run(({ expectObservable, cold }) => {
@@ -66,79 +68,110 @@ const DisplayRendered = ({ stateComp, source, callback }: DisplayRenderedProps) 
   )
 }
 
-it('rerender on state changed', async () => {
+it('rerender on selected state changed', () => {
   const onRerender = jest.fn((state: number) => state)
   const instance = new TestController()
-  const { container } = render(<DisplayRendered source={instance} />)
-  const rendered = getByTestId(container, 'text')
-  const renderedText = rendered.textContent
-  const expectedText = '0'
+  const { container } = render(<DisplayRendered source={instance} callback={onRerender} />)
+  let rendered = getByTestId(container, 'text')
+  let renderedText = rendered.textContent
+  let expectedText = '0'
   expect(renderedText).toBe(expectedText)
-  await act(async () => {
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
+
+  act(() => {
     instance.inc()
   })
-  await waitFor(() => {
-    const rendered = getByTestId(container, 'text')
-    const renderedText = rendered.textContent
-    const expectedText = '5'
-    expect(renderedText).toBe(expectedText)
-    expect(onRerender).toHaveBeenCalledTimes(6)
-    expect(onRerender.mock.calls[0][0]).toBe(0)
-    expect(onRerender.mock.calls[1][0]).toBe(1)
-    expect(onRerender.mock.calls[2][0]).toBe(2)
-    expect(onRerender.mock.calls[3][0]).toBe(3)
-    expect(onRerender.mock.calls[4][0]).toBe(4)
-    expect(onRerender.mock.calls[5][0]).toBe(5)
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '1'
+  expect(renderedText).toBe(expectedText)
+
+  act(() => {
+    instance.inc()
   })
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '2'
+  expect(renderedText).toBe(expectedText)
+
+  act(() => {
+    instance.inc()
+  })
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '3'
+  expect(renderedText).toBe(expectedText)
+
+  act(() => {
+    instance.inc()
+  })
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '4'
+  expect(renderedText).toBe(expectedText)
+
+  act(() => {
+    instance.inc()
+  })
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '5'
+  expect(renderedText).toBe(expectedText)
+
+  act(() => {
+    instance.inc2()
+  })
+  act(() => {
+    instance.inc2()
+  })
+
+  expect(onRerender).toHaveBeenCalledTimes(6)
+  expect(onRerender.mock.calls[0][0]).toBe(0)
+  expect(onRerender.mock.calls[1][0]).toBe(1)
+  expect(onRerender.mock.calls[2][0]).toBe(2)
+  expect(onRerender.mock.calls[3][0]).toBe(3)
+  expect(onRerender.mock.calls[4][0]).toBe(4)
+  expect(onRerender.mock.calls[5][0]).toBe(5)
 })
 
-it('specified state compare respected', async () => {
+it('specified state compare respected', () => {
   const stateCompareFn = jest.fn((prev, curr) => prev !== curr)
   const instance = new TestController()
   const { container } = render(<DisplayRendered source={instance} stateComp={stateCompareFn} />)
-  const rendered = getByTestId(container, 'text')
-  const renderedText = rendered.textContent
-  const expectedText = '0'
+  let rendered = getByTestId(container, 'text')
+  let renderedText = rendered.textContent
+  let expectedText = '0'
   expect(renderedText).toBe(expectedText)
 
-  await act(async () => {
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
-    instance.inc()
-    await asyncDelay(500)
+  act(() => {
     instance.inc()
   })
-  await waitFor(() => {
-    expect(stateCompareFn).toHaveBeenCalledTimes(4)
-    expect(stateCompareFn.mock.calls[0][0]).toBe(0)
-    expect(stateCompareFn.mock.calls[0][1]).toBe(1)
-    expect(stateCompareFn.mock.calls[1][0]).toBe(0)
-    expect(stateCompareFn.mock.calls[1][1]).toBe(2)
-    expect(stateCompareFn.mock.calls[2][0]).toBe(0)
-    expect(stateCompareFn.mock.calls[2][1]).toBe(3)
-    expect(stateCompareFn.mock.calls[3][0]).toBe(0)
-    expect(stateCompareFn.mock.calls[3][1]).toBe(4)
-    const rendered = getByTestId(container, 'text')
-    const renderedText = rendered.textContent
-    const expectedText = '0'
-    expect(renderedText).toBe(expectedText)
+  act(() => {
+    instance.inc()
   })
+  act(() => {
+    instance.inc()
+  })
+  act(() => {
+    instance.inc()
+  })
+
+  expect(stateCompareFn).toHaveBeenCalledTimes(4)
+  expect(stateCompareFn.mock.calls[0][0]).toBe(0)
+  expect(stateCompareFn.mock.calls[0][1]).toBe(1)
+  expect(stateCompareFn.mock.calls[1][0]).toBe(0)
+  expect(stateCompareFn.mock.calls[1][1]).toBe(2)
+  expect(stateCompareFn.mock.calls[2][0]).toBe(0)
+  expect(stateCompareFn.mock.calls[2][1]).toBe(3)
+  expect(stateCompareFn.mock.calls[3][0]).toBe(0)
+  expect(stateCompareFn.mock.calls[3][1]).toBe(4)
+  rendered = getByTestId(container, 'text')
+  renderedText = rendered.textContent
+  expectedText = '0'
+  expect(renderedText).toBe(expectedText)
 })
 
 it('render info with [state, controller]', () => {
-  const instance = new TestController({ counter: 5 })
+  const instance = new TestController({ counter: 5, counter2: 10 })
   const { container } = render(<DisplayRendered source={instance} />)
   const renderedCount = getByTestId(container, 'text')
   const renderedText = renderedCount.textContent
