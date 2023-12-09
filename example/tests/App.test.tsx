@@ -1,8 +1,10 @@
-import {  render } from '@testing-library/react'
+import { getByTestId, render } from '@testing-library/react'
 import App from '../src/App'
 
 test('inject success', () => {
-  render(<App />)
-
-  expect(true).toBe(true);
+  const { container } = render(<App />)
+  const controllerExistElement = getByTestId(container, 'controller-exist-assertion-text')
+  const text = controllerExistElement.textContent
+  const expected = 'Controller existed!'
+  expect(text).toBe(expected)
 })
