@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import {
@@ -34,7 +33,7 @@ const ControllerConsumer = () => {
 }
 
 const ListenerConsumer = () => {
-  const controller = useListener(MultiCounterController, (state) => {})
+  useListener(MultiCounterController, (state) => {})
   console.log('render listner')
   return <h2 data-testid='controller-listener'>Listenner mounted</h2>
 }
