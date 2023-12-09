@@ -3,7 +3,6 @@ import { Constructor, InferStateType, ShouldUpdate, StateCompare } from '../type
 import { useCallback, useEffect, useRef } from 'react'
 import { useControllerResolver } from './useControllerResolver'
 import { isEqual } from '../utils'
-import { Observable, Subscription } from '..'
 
 function useListener<C extends Controller<InferStateType<C>>>(
   ctor: Constructor<C>,
@@ -53,8 +52,7 @@ function useListener<C extends Controller<InferStateType<C>>>(
   }, [stateCompare])
 
   useEffect(() => {
-    const observable: Observable<InferStateType<C>> = controller.observable
-    const subscription: Subscription = observable.subscribe((state) => {
+    const subscription = controller.observable.subscribe((state) => {
       const currentState = stateRef.current
       if (stateCompareRef.current(currentState, state)) {
         return

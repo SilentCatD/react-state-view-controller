@@ -37,4 +37,5 @@ function Builder<C extends Controller<InferStateType<C>>>({
   return children?.(state, controller)
 }
 
-export { Builder, BuilderProps, BuilderControllerProps, BuilderCtorProps }
+export { Builder }
+export type { BuilderProps, BuilderControllerProps, BuilderCtorProps }

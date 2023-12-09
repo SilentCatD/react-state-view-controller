@@ -39,4 +39,5 @@ function Selector<C extends Controller<InferStateType<C>>, T>({
   return children?.(value, controller)
 }
 
-export { Selector, SelectorProps, SelectorControllerProps, SelectorCtorProps }
+export { Selector }
+export type { SelectorProps, SelectorControllerProps, SelectorCtorProps }

@@ -47,4 +47,5 @@ function Listener<C extends Controller<InferStateType<C>>>({
   return children
 }
 
-export { Listener, ListenerProps, ListenerControllerProps, ListenerCtorProps }
+export { Listener }
+export type { ListenerProps, ListenerControllerProps, ListenerCtorProps }

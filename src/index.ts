@@ -20,16 +20,22 @@ import { Selector, SelectorProps, SelectorControllerProps, SelectorCtorProps } f
 import { isEqual } from './utils'
 
 export { isEqual }
-export { Selector, SelectorProps, SelectorControllerProps, SelectorCtorProps }
-export { Builder, BuilderProps, BuilderControllerProps, BuilderCtorProps }
-export { Listener, ListenerProps, ListenerControllerProps, ListenerCtorProps }
+export { Selector }
+export type { SelectorProps, SelectorControllerProps, SelectorCtorProps }
+export { Builder }
+export type { BuilderProps, BuilderControllerProps, BuilderCtorProps }
+export { Listener }
+export type { ListenerProps, ListenerControllerProps, ListenerCtorProps }
 export { useSelector }
 export { useBuilder }
 export { useListener }
 export { useControllerResolver }
-export { MultiProvider, ReceivableElement, MultiProviderProps, useProvider, ResourcesNotProvidedError }
-export { ControllerProvider, ControllerProviderProps }
+export { MultiProvider, useProvider, ResourcesNotProvidedError }
+export type { ReceivableElement, MultiProviderProps }
+export { ControllerProvider }
+export type { ControllerProviderProps }
 export { useAutoDispose }
-export { Create, Constructor, InferStateType, ShouldUpdate, StateCompare }
-export { Subscription, SubscriptionLike, TeardownLogic, Unsubscribable, Observable }
+export type { Create, Constructor, InferStateType, ShouldUpdate, StateCompare }
+export { Subscription, Observable }
+export type { SubscriptionLike, TeardownLogic, Unsubscribable }
 export { Controller }
