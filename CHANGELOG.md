@@ -1,7 +1,12 @@
-# 2.5.0
+# 3.0.0
 
-- Support functional overloading in `useBuilder`, `useListener`, `useSelector`, now these can be used directly with `Controller`
-- Add `useAutoDispose` hook, allow the auto management of a `Controller` lifeCycle inside component.
+- Revamp the whole DI mechanism, remove `Context`, remove `useController`. Use `useProvider` instead.
+- Setup Github CI/CD
+- Test/ coverage test
+- Remove ability to define `Controller` in a functional way
+- Removed hooks: `useController`, use
+- Hooks: `useBuilder`, `useListener`, `useSelector` now can take in directly an instance of `Controller`
+- Hooks: `useAutoDispose` introduced
 
 # 2.4.1
 
