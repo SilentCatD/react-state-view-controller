@@ -1,6 +1,10 @@
+# next
+
+- Edit README
+
 # 3.0.1
 
-- Edit example and trigger CI rebuild process 
+- Edit example and trigger CI rebuild process
 
 # 3.0.0
 
