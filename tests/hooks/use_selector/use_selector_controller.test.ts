@@ -90,10 +90,14 @@ it('specified state compare respected', async () => {
     )
   })
   expect(result.current).toBe(0)
-  act(() => {
+  await act(async () => {
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
   })
   await waitFor(() => {

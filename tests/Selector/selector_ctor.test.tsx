@@ -117,10 +117,14 @@ it('specified state compare respected', async () => {
   const expectedText = '0'
   expect(renderedText).toBe(expectedText)
 
-  act(() => {
+  await act(async () => {
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
   })
   await waitFor(() => {
