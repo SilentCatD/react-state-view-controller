@@ -34,7 +34,7 @@ const ControllerConsumer = () => {
 }
 
 const ListenerConsumer = () => {
-  const controller = useListener(MultiCounterController, (state) => console.log(state))
+  const controller = useListener(MultiCounterController, (state) => {})
   console.log('render listner')
   return <h2 data-testid='controller-listener'>Listenner mounted</h2>
 }
