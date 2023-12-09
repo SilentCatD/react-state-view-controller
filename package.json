@@ -1,6 +1,6 @@
 {
   "name": "react-state-view-controller",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A clean state management library for React/React Native. Effectively separate logic and UI",
   "type": "module",
   "source": "src/index.ts",

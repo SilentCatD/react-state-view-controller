@@ -1,3 +1,7 @@
+# 3.0.1
+
+- Edit example and trigger CI rebuild process 
+
 # 3.0.0
 
 - Revamp the whole DI mechanism, remove `Context`, remove `useController`. Use `useProvider` instead.
