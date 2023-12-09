@@ -3,6 +3,8 @@ import { Controller, ControllerProvider, ResourcesNotProvidedError, useBuilder }
 import { act, getByTestId, render, waitFor } from '@testing-library/react'
 import { tap } from 'rxjs'
 
+const asyncDelay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 class TestController extends Controller<number> {
   constructor(initialValue?: number) {
     super(initialValue ?? 0)
@@ -42,9 +44,11 @@ it('emit object values every reEmit', () => {
 type DisplayRenderedProps = {
   buildWhen?: (prev: number, curr: number) => boolean
   stateComp?: (prev: number, curr: number) => boolean
+  callback?: (state: number) => void
 }
-const DisplayRendered = ({ buildWhen, stateComp }: DisplayRenderedProps) => {
+const DisplayRendered = ({ buildWhen, stateComp, callback }: DisplayRenderedProps) => {
   const [state, controller] = useBuilder(TestController, buildWhen, stateComp)
+  callback?.(state)
   return (
     <>
       <h1 data-testid='text'>{state}</h1>
@@ -85,21 +89,27 @@ it('buildWhen respected', (done) => {
 })
 
 it('rerender on state changed', async () => {
+  const onRerender = jest.fn((state: number) => state)
   const instance = new TestController()
   const { container } = render(
     <ControllerProvider ctor={TestController} source={instance}>
-      <DisplayRendered />
+      <DisplayRendered callback={onRerender} />
     </ControllerProvider>,
   )
   const rendered = getByTestId(container, 'text')
   const renderedText = rendered.textContent
   const expectedText = '0'
   expect(renderedText).toBe(expectedText)
-  act(() => {
+  await act(async () => {
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
   })
   await waitFor(() => {
@@ -107,6 +117,13 @@ it('rerender on state changed', async () => {
     const renderedText = rendered.textContent
     const expectedText = '5'
     expect(renderedText).toBe(expectedText)
+    expect(onRerender).toHaveBeenCalledTimes(6)
+    expect(onRerender.mock.calls[0][0]).toBe(0)
+    expect(onRerender.mock.calls[1][0]).toBe(1)
+    expect(onRerender.mock.calls[2][0]).toBe(2)
+    expect(onRerender.mock.calls[3][0]).toBe(3)
+    expect(onRerender.mock.calls[4][0]).toBe(4)
+    expect(onRerender.mock.calls[5][0]).toBe(5)
   })
 })
 

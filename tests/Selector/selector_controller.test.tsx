@@ -3,6 +3,8 @@ import { Controller, Selector } from '../../src'
 import { act, getByTestId, render, waitFor } from '@testing-library/react'
 import { tap } from 'rxjs'
 
+const asyncDelay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 type CounterData = {
   counter: number
 }
@@ -46,11 +48,13 @@ it('emit object values every reEmit', () => {
 type DisplayRenderedProps = {
   source: TestController
   stateComp?: (prev: number, curr: number) => boolean
+  callback?: (state: number) => void
 }
-const DisplayRendered = ({ stateComp, source }: DisplayRenderedProps) => {
+const DisplayRendered = ({ stateComp, source, callback }: DisplayRenderedProps) => {
   return (
     <Selector source={source} selector={(state) => state.counter} stateCompare={stateComp}>
       {(state) => {
+        callback?.(state)
         return (
           <>
             <h1 data-testid='text'>{state}</h1>
@@ -63,17 +67,23 @@ const DisplayRendered = ({ stateComp, source }: DisplayRenderedProps) => {
 }
 
 it('rerender on state changed', async () => {
+  const onRerender = jest.fn((state: number) => state)
   const instance = new TestController()
   const { container } = render(<DisplayRendered source={instance} />)
   const rendered = getByTestId(container, 'text')
   const renderedText = rendered.textContent
   const expectedText = '0'
   expect(renderedText).toBe(expectedText)
-  act(() => {
+  await act(async () => {
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
   })
   await waitFor(() => {
@@ -81,6 +91,13 @@ it('rerender on state changed', async () => {
     const renderedText = rendered.textContent
     const expectedText = '5'
     expect(renderedText).toBe(expectedText)
+    expect(onRerender).toHaveBeenCalledTimes(6)
+    expect(onRerender.mock.calls[0][0]).toBe(0)
+    expect(onRerender.mock.calls[1][0]).toBe(1)
+    expect(onRerender.mock.calls[2][0]).toBe(2)
+    expect(onRerender.mock.calls[3][0]).toBe(3)
+    expect(onRerender.mock.calls[4][0]).toBe(4)
+    expect(onRerender.mock.calls[5][0]).toBe(5)
   })
 })
 

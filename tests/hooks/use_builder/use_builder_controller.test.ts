@@ -3,6 +3,7 @@ import { Controller, useBuilder } from '../../../src'
 import { tap } from 'rxjs'
 import { act, renderHook, waitFor } from '@testing-library/react'
 
+const asyncDelay = (ms: number) => new Promise((r) => setTimeout(r, ms))
 class TestController extends Controller<number> {
   constructor() {
     super(0)
@@ -64,19 +65,36 @@ it('buildWhen respected', (done) => {
 })
 
 it('rerender on state changed', async () => {
+  const onRerender = jest.fn((state: number) => state)
   const instance = new TestController()
   const { result } = renderHook(() => {
-    return useBuilder(instance)
+    const state = useBuilder(instance)
+    onRerender(state)
+    return state
   })
   expect(result.current).toBe(0)
-  act(() => {
+  await act(async () => {
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
+    await asyncDelay(500)
     instance.inc()
   })
-  await waitFor(() => expect(result.current).toBe(5))
+  await waitFor(() => {
+    expect(result.current).toBe(5)
+    expect(onRerender).toHaveBeenCalledTimes(6)
+    expect(onRerender.mock.calls[0][0]).toBe(0)
+    expect(onRerender.mock.calls[1][0]).toBe(1)
+    expect(onRerender.mock.calls[2][0]).toBe(2)
+    expect(onRerender.mock.calls[3][0]).toBe(3)
+    expect(onRerender.mock.calls[4][0]).toBe(4)
+    expect(onRerender.mock.calls[5][0]).toBe(5)
+  })
 })
 
 it('specified state compare respected', async () => {
