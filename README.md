@@ -44,19 +44,31 @@ In my opinion, a robust state management system should effectively adhere to the
 
 This library is created to address the concerns mentioned above.
 
-### Controller
+## Controller
 
-Defining a `Controller` for a view or a view group in subclass manner will benefit from these criterias:
+### Overview
 
-- `Inter-Controller Subscription`: `Controller` can subscribe to and depend on each other, allowing for the internal triggering of state emissions.
+When defining a `Controller` for a React view or view group, adopting a subclass approach brings several advantages:
 
-- `Inheritance and Extensibility`: By making use of inheritance, a `Controller` can be further extended, leading to more reusable code.
+#### 1. Inter-Controller Subscription
 
-- `Property Manipulation`: Creating, accessing, and modifying properties within a Controller becomes straightforward.
+`Controller` instances can seamlessly subscribe to and depend on each other, enabling internal triggers for state emissions.
 
-The `State` object is something that holds data for UI rendering, and the UI uses `State` for its rendering process.
+#### 2. Inheritance and Extensibility
 
-Take a look at some available function in the base `Controller` class. We won't have to re-write any of this, unless we want to.
+Utilizing inheritance facilitates the extension of a `Controller`, promoting the creation of more reusable code.
+
+#### 3. Property Manipulation
+
+Creating, accessing, and modifying properties within a `Controller` becomes a straightforward process.
+
+### State Management
+
+The core of the state management revolves around the `State` object, responsible for holding data crucial for UI rendering. The UI utilizes the `State` object during its rendering process.
+
+### Base Controller Class
+
+Explore some of the available functions in the base `Controller` class. The provided functionality eliminates the need for redundant code, unless customization is desired.
 
 ```ts
 abstract class Controller<T> {
@@ -82,7 +94,7 @@ abstract class Controller<T> {
 
 A `Controller` will directly interact with the `State` object to mutate it, indirectly causing UI re-rendering.
 
-To create a new `Controller`, you need to extend the `Controller` class, which provides methods for state mutation and notifying listeners. In the example above, the `CounterController` has `{count: 0}` as its `initialState`. It updates it through methods like `increaseCounter` or `decreaseCounter` using `emit(newState)`.
+To create a new `Controller`, you need to extend the `Controller` class, which provides methods for state mutation and notifying listeners. In the example below, the `CounterController` has `{count: 0}` as its `initialState`. It updates it through methods like `increaseCounter` or `decreaseCounter` using `emit(newState)`.
 
 ```ts
 import { Controller } from 'react-state-view-controller'
@@ -107,7 +119,7 @@ class CounterController extends Controller<CounterState> {
 
 Do note that the `newState` object must be different from the old `State`. Otherwise, the `Controller` will just skip it. This optimization avoids unnecessary state updates.
 
-When using `emit`, the `{...this.state}` is not needed. Object passed in the `emit(newState)` function will be merge with the existed current state.
+When using `emit`, the `{...this.state}` is not needed to copy other contents of old state. Object passed in the `emit(newState)` function will be merge with the existed current state.
 
 One of many common patterns is to handle all of the necessary logic to fetch data from an API in the `Controller`, then emit the data from within the `Controller`. For example:
 
@@ -140,7 +152,7 @@ In the UI, we can then check for the `loading` property of the `State` object an
 
 ### Provider and Dependency Injection (DI)
 
-A `Controller` manages states for a scope of child components, and so it must be provided to them for further interaction and triggering re-render. This is similar to the `Context` API. In fact, this library uses the `Context` API internally for DI.
+A `Controller` manages states for a group of child components, and so it must be provided to them for further interaction. This is similar to the `Context` API. In fact, this library uses the `Context` API internally for DI.
 
 To provide a group of child components with a `Controller`, we can use `ControllerProvider`:
 
@@ -151,18 +163,19 @@ To provide a group of child components with a `Controller`, we can use `Controll
 </ControllerProvider>
 ```
 
-The `source` parameter take in a function to create `Controller` and keep it with `useRef` throughout the component's life-span. When the component unmounted, a clean up function will be called and automatically trigger the `dispose` function defined inside the `Controller` class, allow resources clean up.
+The `source` parameter take in a function to create a `Controller` and keep it with `useRef` throughout the component's life-span. When the component unmounted, a clean up function will be called automatically, trigger the `dispose` function defined inside the `Controller` class, allowing resources clean up when a `Controller` is not needed anymore.
 
-Another way to provide a `Controller` to children components would be using `ControllerProvider` but pass in the `source` param an instance of `Controller` instead of a create function
+Another way to provide a `Controller` to children components would be using `ControllerProvider` but pass to the `source` param an instance of `Controller` instead of a create function:
 
 ```tsx
+// existed isntance else where, you would have to manage the references and cleanup yourself though
 <ControllerProvider source={counterControllerInstance}>
   <CounterComponent />
   <ButtonComponent />
 </ControllerProvider>
 ```
 
-But be aware that `Controller` provided this way won't be kept with `useRef` like the first one, and maybe subjected to change, clean up function also won't be called for this type of `ControllerProvider`
+But be aware that `Controller` provided this way won't be kept with `useRef` like the first approach, clean up function also won't be called when this `ControllerProvider` unmounted.
 
 The `CounterComponent` and `ButtonComponent` will now have access to the `CounterController`.
 
@@ -172,7 +185,7 @@ Inside the `ButtonComponent` or `CounterComponent`, you can get the provided `Co
 import { useProvider } from 'react-state-view-controller'
 
 const ButtonComponent = () => {
-  // pass in the type of provided controller
+  // pass in the type of class
   const controller = useProvider(CounterController)
   return (
     <div>
@@ -187,12 +200,14 @@ You can interact with the provided `CounterController` as needed. Please note th
 
 This hook should not cause re-render when new `State` from `CounterController` is emitted.
 
-The instance passed in `ControllerProvider` will have it's name extracted and used as a resource-key for later query, this mean if you provide a class with the name `A`, you have to use the exact type to query it with `useProvider` hook.
+The `Controller` instance passed to `ControllerProvider` will have it's name extracted and used as a resource-key for later query, this mean if you provide a class with the name `A`, you have to use the exact type to query it with `useProvider` hook.
 
-But for cases that one type of `Controller` may has many implemmentations, subclass-ing each other, and we only want the dependent/client of this controller know it's base type, we can use the `ctor` param in `ProviderController`, this effectively change the query type of provided `Controller`
+But for cases that one type of `Controller` may has many implemmentations, subclass-ing each other, and we only want the dependent/client of this controller know it's base type, we can use the `ctor` param in `ProviderController` to overwrite the query type.
 
 ```tsx
-// query type will now become `TestController`: useProvider(TestController)
+// query type will now become `TestController`
+// else where:
+// useProvider(TestController)
 <ControllerProvider ctor={TestController} source={()=> SubclassOfTestController()}>
   <Screen />
 </ControllerProvider>,
@@ -234,20 +249,18 @@ import { MultiProvider } from 'react-state-view-controller';
 
 ```
 
-Both representations are equivalent. The nested component encompasses the others, granting access to the above `Controller` if needed.
+Both representations are equivalent. The nested components wrapped each other, granting access to the above provided resources if needed.
 
-In situations where a single `ControllerProvider` requires access to the above `Controller` to depend on it, consider separating it into a distinct component:
+In situations where a single `ControllerProvider` requires access to already provided `Controller` to depend on it, consider separating it into a distinct component:
 
 ```tsx
 import { useProvider } from 'react-state-view-controller'
 
-const Counter2Provider = ({ children }) => {
+const DependentProvider = ({ children }) => {
   // We can get the CounterController here because it's provided is above this component.
   const controller = useProvider(CounterController)
-  // do something with CounterController
-  // ...
 
-  return <ControllerProvider create={() => new CounterController2()}>{children}</ControllerProvider>
+  return <ControllerProvider create={() => new DependentController(controller)}>{children}</ControllerProvider>
 }
 ```
 
@@ -257,7 +270,7 @@ Then this component can then be used as follows:
 <MultiProvider
   providers={[
     <ControllerProvider create={() => new CounterController()} />,
-    <Counter2Provider />,
+    <DependentProvider />,
     <ControllerProvider create={() => new CounterController3()} />,
     <ControllerProvider create={() => new CounterController4()} />,
   ]}
@@ -268,7 +281,7 @@ Then this component can then be used as follows:
 
 ### useAutoDispose
 
-While `ControllerProvider` provides an effective way of DI, there are times that this is unecessary, as we just simply want to separate logic of a small view to a controller, but still want to benefit from the auto-cleanup feature.
+While `ControllerProvider` provides an effective way of DI, there are times that this is unecessary, as we just simply want to separate logic of a small view to a controller, dependent child components won't go that deeply nested, but still want to benefit from the auto-cleanup feature.
 
 In this case, we can use the `useAutoDispose` hook:
 
@@ -278,7 +291,7 @@ const controller = useAutoDispose(() => new CounterController())
 
 This `controller` instance will be kept with `useRef`, making it persist between re-render and will auto call the `dispose` function when current component is unmounted.
 
-Controller created this way can also be feed into the `source` param of `ProviderController` mentioned above, preferably the second type, which `source` take in an instance, as the responsibility of maintaining instance and auto cleaning up feature is handled already by `useAutoDispose`.
+Controller created this way can also be feed into the `source` param of `ProviderController` mentioned above, specifically the second approach, which the `source` param take in an instance. Because the responsibility of persisting the controller instance and auto cleaning up feature is handled already by `useAutoDispose`.
 
 ### Builder
 
@@ -286,7 +299,7 @@ To trigger the re-render process when new State is emitted from `Controller` wit
 
 ```tsx
 <Builder
-  // specify the type to query
+  // specify the class type to query
   source={CounterController}
   buildWhen={(prev, curr) => {
     // Optional: If this function is provided and returns `false`, the re-render trigger will be skipped.
@@ -307,7 +320,7 @@ This component can also take in directly an instance of `Controller` as the `sou
 ```tsx
 <Builder
   // passing an instance
-  source={counterControllerInstance}
+  source={counterInstance}
   buildWhen={(prev, curr) => true}
 >
   {(state: number) => {
@@ -327,7 +340,7 @@ import { useBuilder } from 'react-state-view-controller'
 // type
 const [state, controller] = useBuilder(CounterController, (prev, curr) => true)
 // or instance
-const state = useBuilder(counterControllerInstance)
+const state = useBuilder(counterInstance)
 ```
 
 ### Selector
@@ -347,7 +360,7 @@ Usually, we don't need to watch for changes in the whole `State`, but rather jus
 It also support direct controller instance variant
 
 ```tsx
-<Selector source={multiCounterControllerInstance} selector={(state) => state.count5}>
+<Selector source={multiCounterInstance} selector={(state) => state.count5}>
   {(value) => {
     // render content based on selected value
     return <View></View>
@@ -361,9 +374,9 @@ Alternatively, we can use the `useSelector` hook
 import { useSelector } from 'react-state-view-controller'
 
 // only trigger re-render when `state.count5` changed
-const [value, controller] = useSelector(CounterController, (state) => state.count5)
+const [value, controller] = useSelector(MultiCounterController, (state) => state.count5)
 // or the equivalent
-const value = useSelector(counterControllerInstance, (state) => state.count5)
+const value = useSelector(multiCounterInstance, (state) => state.count5)
 ```
 
 ### Listener
@@ -389,7 +402,7 @@ The controller instance variant:
 
 ```tsx
 <Listener
-  source={counterControllerInstance}
+  source={counterInstance}
   listener={(state: number) => console.log(state)}
   listenWhen={(prev: number, current: number) => true}
 >
@@ -409,7 +422,7 @@ const controller = useListener(
 )
 // or
 const controller = useListener(
-  counterControllerInstance,
+  counterInstance,
   (state) => console.log(state), // callback when state changed
   (prev, curr) => true, // callback filter
 )
@@ -419,9 +432,9 @@ Note that this hook is not intended by default to cause re-render, it just simpl
 
 ## For other types
 
-Of course, a view `Controller` is not the only thing that we need to DI in a production app, we have services, repositories, models,... or other types of data.
+Of course, a view `Controller` is not the only thing that we need to DI in typical production app, we also have services, repositories, models,... or other types of data.
 
-To acommondate these, you can check out the [react-scoped-provider](https://www.npmjs.com/package/react-scoped-provider) library, it is fully compatible with this library, in fact, the `useProvider` hook is just re-import and re-export from it.
+To acommondate these, you can check out the [react-scoped-provider](https://www.npmjs.com/package/react-scoped-provider) library, which is fully compatible with this library, in fact, the `useProvider` hook is just re-import and re-export from it.
 
 ## Conclusion
 
