@@ -168,7 +168,7 @@ The `source` parameter take in a function to create a `Controller` and keep it w
 Another way to provide a `Controller` to children components would be using `ControllerProvider` but pass to the `source` param an instance of `Controller` instead of a create function:
 
 ```tsx
-// existed isntance else where, you would have to manage the references and cleanup yourself though
+// existed instance else where, you would have to manage the references and cleanup yourself though
 <ControllerProvider source={counterControllerInstance}>
   <CounterComponent />
   <ButtonComponent />
@@ -208,7 +208,7 @@ But for cases that one type of `Controller` may has many implemmentations, subcl
 // query type will now become `TestController`
 // else where:
 // useProvider(TestController)
-<ControllerProvider ctor={TestController} source={()=> SubclassOfTestController()}>
+<ControllerProvider ctor={TestController} source={()=> new SubclassOfTestController()}>
   <Screen />
 </ControllerProvider>,
 ```
@@ -421,7 +421,7 @@ const controller = useListener(
   (prev, curr) => true, // callback filter
 )
 // or
-const controller = useListener(
+useListener(
   counterInstance,
   (state) => console.log(state), // callback when state changed
   (prev, curr) => true, // callback filter
